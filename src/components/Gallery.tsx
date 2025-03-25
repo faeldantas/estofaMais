@@ -8,7 +8,7 @@ import {
   DialogTitle 
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Search, Filter } from "lucide-react";
+import { Search, Filter, Palette, DollarSign } from "lucide-react";
 import { 
   Select, 
   SelectContent, 
@@ -17,6 +17,8 @@ import {
   SelectValue 
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { Slider } from "@/components/ui/slider";
+import { Badge } from "@/components/ui/badge";
 
 export interface GalleryImage {
   id: number;
@@ -25,6 +27,8 @@ export interface GalleryImage {
   category: string;
   materials: string;
   title: string;
+  color?: string; // Add color property
+  price?: number; // Add price property
 }
 
 interface GalleryProps {
@@ -35,10 +39,18 @@ export const Gallery = ({ images }: GalleryProps) => {
   const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedMaterial, setSelectedMaterial] = useState<string>("");
+  const [selectedColor, setSelectedColor] = useState<string>("");
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
   const [showFilters, setShowFilters] = useState(false);
 
-  // Extract unique materials for filter options
+  // Extract unique materials and colors for filter options
   const allMaterials = Array.from(new Set(images.map(img => img.materials)));
+  const allColors = Array.from(new Set(images.filter(img => img.color).map(img => img.color as string)));
+  
+  // Find min and max prices for the slider
+  const prices = images.filter(img => img.price !== undefined).map(img => img.price as number);
+  const minPrice = prices.length > 0 ? Math.min(...prices) : 0;
+  const maxPrice = prices.length > 0 ? Math.max(...prices) : 1000;
 
   const openLightbox = (image: GalleryImage) => {
     setSelectedImage(image);
@@ -50,17 +62,28 @@ export const Gallery = ({ images }: GalleryProps) => {
 
   // Handle material selection
   const handleMaterialChange = (value: string) => {
-    setSelectedMaterial(value);
-    console.log("Selected material:", value);
+    setSelectedMaterial(value === "all" ? "" : value);
+  };
+
+  // Handle color selection
+  const handleColorChange = (value: string) => {
+    setSelectedColor(value === "all" ? "" : value);
+  };
+
+  // Handle price range change
+  const handlePriceRangeChange = (value: number[]) => {
+    setPriceRange([value[0], value[1]]);
   };
 
   // Clear all filters
   const clearFilters = () => {
     setSelectedMaterial("");
+    setSelectedColor("");
+    setPriceRange([minPrice, maxPrice]);
     setSearchTerm("");
   };
 
-  // Filter images based on search term and selected material
+  // Filter images based on search term, selected material, color, and price range
   const filteredImages = images.filter(image => {
     const matchesSearch = searchTerm === "" || 
       image.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -69,8 +92,22 @@ export const Gallery = ({ images }: GalleryProps) => {
     const matchesMaterial = selectedMaterial === "" || 
       image.materials.toLowerCase() === selectedMaterial.toLowerCase();
     
-    return matchesSearch && matchesMaterial;
+    const matchesColor = selectedColor === "" || 
+      (image.color && image.color.toLowerCase() === selectedColor.toLowerCase());
+    
+    const matchesPrice = !image.price || 
+      (image.price >= priceRange[0] && image.price <= priceRange[1]);
+    
+    return matchesSearch && matchesMaterial && matchesColor && matchesPrice;
   });
+
+  // Format price as Brazilian currency
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    }).format(price);
+  };
 
   return (
     <>
@@ -93,30 +130,82 @@ export const Gallery = ({ images }: GalleryProps) => {
           >
             <Filter className="h-5 w-5" />
             Filtros
+            {(selectedMaterial || selectedColor || priceRange[0] > minPrice || priceRange[1] < maxPrice) && (
+              <Badge variant="secondary" className="ml-2">Ativos</Badge>
+            )}
           </Button>
         </div>
 
         {showFilters && (
           <div className="bg-gray-50 p-4 rounded-md">
             <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-medium mb-2 flex items-center gap-2">
+                    <Palette className="h-4 w-4" /> Material:
+                  </label>
+                  <Select 
+                    value={selectedMaterial || "all"} 
+                    onValueChange={handleMaterialChange}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Selecione um material" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todos os materiais</SelectItem>
+                      {allMaterials.map((material, index) => (
+                        <SelectItem key={index} value={material}>
+                          {material}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div>
+                  <label className="text-sm font-medium mb-2 flex items-center gap-2">
+                    <Palette className="h-4 w-4" /> Cor:
+                  </label>
+                  <Select 
+                    value={selectedColor || "all"} 
+                    onValueChange={handleColorChange}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Selecione uma cor" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todas as cores</SelectItem>
+                      {allColors.map((color, index) => (
+                        <SelectItem key={index} value={color}>
+                          <div className="flex items-center gap-2">
+                            <div 
+                              className="w-4 h-4 rounded-full" 
+                              style={{ backgroundColor: color.toLowerCase() }}
+                            ></div>
+                            {color}
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              
               <div>
-                <label className="text-sm font-medium mb-2 block">Material:</label>
-                <Select 
-                  value={selectedMaterial} 
-                  onValueChange={handleMaterialChange}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Selecione um material" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Todos os materiais</SelectItem>
-                    {allMaterials.map((material, index) => (
-                      <SelectItem key={index} value={material}>
-                        {material}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <label className="text-sm font-medium mb-2 flex items-center gap-2">
+                  <DollarSign className="h-4 w-4" /> Faixa de Preço: {formatPrice(priceRange[0])} - {formatPrice(priceRange[1])}
+                </label>
+                <div className="px-2 pt-6 pb-2">
+                  <Slider
+                    defaultValue={[minPrice, maxPrice]}
+                    min={minPrice}
+                    max={maxPrice}
+                    step={10}
+                    value={[priceRange[0], priceRange[1]]}
+                    onValueChange={handlePriceRangeChange}
+                    className="w-full"
+                  />
+                </div>
               </div>
               
               <div className="flex justify-end">
@@ -161,6 +250,21 @@ export const Gallery = ({ images }: GalleryProps) => {
             <div className="p-4">
               <h3 className="font-semibold text-lg">{image.title}</h3>
               <p className="text-gray-600">Material: {image.materials}</p>
+              {image.color && (
+                <div className="flex items-center gap-2 mt-1">
+                  <span className="text-gray-600">Cor:</span>
+                  <div className="flex items-center gap-1">
+                    <div 
+                      className="w-4 h-4 rounded-full border border-gray-300" 
+                      style={{ backgroundColor: image.color }}
+                    ></div>
+                    <span>{image.color}</span>
+                  </div>
+                </div>
+              )}
+              {image.price && (
+                <p className="text-gray-600 mt-1">Preço: {formatPrice(image.price)}</p>
+              )}
             </div>
           </div>
         ))}
@@ -173,7 +277,24 @@ export const Gallery = ({ images }: GalleryProps) => {
               <DialogHeader>
                 <DialogTitle>{selectedImage.title}</DialogTitle>
                 <DialogDescription>
-                  Material utilizado: {selectedImage.materials}
+                  <div className="space-y-2 mt-2">
+                    <p>Material: {selectedImage.materials}</p>
+                    {selectedImage.color && (
+                      <div className="flex items-center gap-2">
+                        <span>Cor:</span>
+                        <div className="flex items-center gap-1">
+                          <div 
+                            className="w-4 h-4 rounded-full border border-gray-300" 
+                            style={{ backgroundColor: selectedImage.color }}
+                          ></div>
+                          <span>{selectedImage.color}</span>
+                        </div>
+                      </div>
+                    )}
+                    {selectedImage.price && (
+                      <p>Preço: {formatPrice(selectedImage.price)}</p>
+                    )}
+                  </div>
                 </DialogDescription>
               </DialogHeader>
               <div className="mt-4">

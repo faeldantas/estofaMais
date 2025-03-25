@@ -14,7 +14,7 @@ const GalleryPage = () => {
     { id: "cars", name: "Automóveis" },
   ];
 
-  // Gallery items with expanded variety for better filtering demonstration
+  // Gallery items with expanded properties for better filtering demonstration
   const galleryItems: GalleryImage[] = [
     {
       id: 1,
@@ -22,7 +22,9 @@ const GalleryPage = () => {
       alt: "Sofá reformado",
       category: "sofas",
       materials: "Veludo azul",
-      title: "Reforma de Sofá 3 Lugares"
+      title: "Reforma de Sofá 3 Lugares",
+      color: "Azul",
+      price: 1850
     },
     {
       id: 2,
@@ -30,7 +32,9 @@ const GalleryPage = () => {
       alt: "Cadeira de jantar reformada",
       category: "chairs",
       materials: "Linho bege",
-      title: "Reforma de Cadeiras de Jantar"
+      title: "Reforma de Cadeiras de Jantar",
+      color: "Bege",
+      price: 750
     },
     {
       id: 3,
@@ -38,7 +42,9 @@ const GalleryPage = () => {
       alt: "Interior de carro reformado",
       category: "cars",
       materials: "Couro sintético preto",
-      title: "Estofamento de Bancos Automotivos"
+      title: "Estofamento de Bancos Automotivos",
+      color: "Preto",
+      price: 2350
     },
     {
       id: 4,
@@ -46,7 +52,9 @@ const GalleryPage = () => {
       alt: "Sofá de canto reformado",
       category: "sofas",
       materials: "Suede marrom",
-      title: "Reforma de Sofá de Canto"
+      title: "Reforma de Sofá de Canto",
+      color: "Marrom",
+      price: 2200
     },
     {
       id: 5,
@@ -54,7 +62,9 @@ const GalleryPage = () => {
       alt: "Poltrona reformada",
       category: "chairs",
       materials: "Veludo verde",
-      title: "Restauração de Poltrona Vintage"
+      title: "Restauração de Poltrona Vintage",
+      color: "Verde",
+      price: 950
     },
     {
       id: 6,
@@ -62,7 +72,9 @@ const GalleryPage = () => {
       alt: "Interior de van reformado",
       category: "cars",
       materials: "Couro sintético branco",
-      title: "Reforma Interior de Van"
+      title: "Reforma Interior de Van",
+      color: "Branco",
+      price: 3250
     },
     {
       id: 7,
@@ -70,7 +82,9 @@ const GalleryPage = () => {
       alt: "Sofá retrátil reformado",
       category: "sofas",
       materials: "Chenille cinza",
-      title: "Reforma de Sofá Retrátil"
+      title: "Reforma de Sofá Retrátil",
+      color: "Cinza",
+      price: 1950
     },
     {
       id: 8,
@@ -78,7 +92,9 @@ const GalleryPage = () => {
       alt: "Cadeiras para área externa",
       category: "chairs",
       materials: "Tecido impermeável",
-      title: "Reforma de Cadeiras para Jardim"
+      title: "Reforma de Cadeiras para Jardim",
+      color: "Azul",
+      price: 600
     },
     {
       id: 9,
@@ -86,7 +102,9 @@ const GalleryPage = () => {
       alt: "Interior de barco reformado",
       category: "cars",
       materials: "Couro náutico",
-      title: "Reforma de Estofados Náuticos"
+      title: "Reforma de Estofados Náuticos",
+      color: "Branco",
+      price: 4500
     }
   ];
 
