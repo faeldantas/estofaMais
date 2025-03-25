@@ -14,7 +14,7 @@ const GalleryPage = () => {
     { id: "cars", name: "Automóveis" },
   ];
 
-  // Placeholder gallery items - would be replaced with real data
+  // Gallery items with expanded variety for better filtering demonstration
   const galleryItems: GalleryImage[] = [
     {
       id: 1,
@@ -40,7 +40,54 @@ const GalleryPage = () => {
       materials: "Couro sintético preto",
       title: "Estofamento de Bancos Automotivos"
     },
-    // Add more gallery items as needed
+    {
+      id: 4,
+      src: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc",
+      alt: "Sofá de canto reformado",
+      category: "sofas",
+      materials: "Suede marrom",
+      title: "Reforma de Sofá de Canto"
+    },
+    {
+      id: 5,
+      src: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7",
+      alt: "Poltrona reformada",
+      category: "chairs",
+      materials: "Veludo verde",
+      title: "Restauração de Poltrona Vintage"
+    },
+    {
+      id: 6,
+      src: "https://images.unsplash.com/photo-1558211583-d26f610c1eb1",
+      alt: "Interior de van reformado",
+      category: "cars",
+      materials: "Couro sintético branco",
+      title: "Reforma Interior de Van"
+    },
+    {
+      id: 7,
+      src: "https://images.unsplash.com/photo-1519947486511-46149fa0a254",
+      alt: "Sofá retrátil reformado",
+      category: "sofas",
+      materials: "Chenille cinza",
+      title: "Reforma de Sofá Retrátil"
+    },
+    {
+      id: 8,
+      src: "https://images.unsplash.com/photo-1592078615290-033ee584e267",
+      alt: "Cadeiras para área externa",
+      category: "chairs",
+      materials: "Tecido impermeável",
+      title: "Reforma de Cadeiras para Jardim"
+    },
+    {
+      id: 9,
+      src: "https://images.unsplash.com/photo-1556189250-72ba954cfc2b",
+      alt: "Interior de barco reformado",
+      category: "cars",
+      materials: "Couro náutico",
+      title: "Reforma de Estofados Náuticos"
+    }
   ];
 
   // Filter gallery items based on selected category
