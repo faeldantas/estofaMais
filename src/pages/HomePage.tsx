@@ -2,7 +2,7 @@
 import { Link } from "react-router-dom";
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
-import { Sofa, Car, Chair } from "lucide-react";
+import { Sofa, Car, Armchair } from "lucide-react";
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -18,7 +18,7 @@ const HomePage = () => {
       id: 2,
       title: "Cadeiras",
       description: "Restauramos cadeiras de jantar, escritório e outros estilos.",
-      icon: Chair,
+      icon: Armchair,
     },
     {
       id: 3,

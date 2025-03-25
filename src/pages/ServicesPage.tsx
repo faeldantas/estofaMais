@@ -1,7 +1,7 @@
 
 import Layout from "@/components/Layout";
 import ServiceItem from "@/components/ServiceItem";
-import { Sofa, Chair, Car } from "lucide-react";
+import { Sofa, Armchair, Car } from "lucide-react";
 
 const ServicesPage = () => {
   const services = [
@@ -22,7 +22,7 @@ const ServicesPage = () => {
       id: 2,
       title: "Reforma de Cadeiras",
       description: "Restauramos cadeiras de jantar, escritório, poltronas e banquetas. Recuperamos o conforto e a estética de suas cadeiras com materiais de alta qualidade e acabamento impecável.",
-      icon: Chair,
+      icon: Armchair,
       materials: ["Tecido Impermeável", "Couro Sintético", "Microfibra", "Couro Natural", "Tecidos Estampados"],
       beforeAfterImages: [
         {
