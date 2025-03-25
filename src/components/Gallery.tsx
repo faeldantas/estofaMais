@@ -16,7 +16,7 @@ import {
   SelectTrigger, 
   SelectValue 
 } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
 
 export interface GalleryImage {
   id: number;
@@ -48,6 +48,18 @@ export const Gallery = ({ images }: GalleryProps) => {
     setSelectedImage(null);
   };
 
+  // Handle material selection
+  const handleMaterialChange = (value: string) => {
+    setSelectedMaterial(value);
+    console.log("Selected material:", value);
+  };
+
+  // Clear all filters
+  const clearFilters = () => {
+    setSelectedMaterial("");
+    setSearchTerm("");
+  };
+
   // Filter images based on search term and selected material
   const filteredImages = images.filter(image => {
     const matchesSearch = searchTerm === "" || 
@@ -55,7 +67,7 @@ export const Gallery = ({ images }: GalleryProps) => {
       image.materials.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesMaterial = selectedMaterial === "" || 
-      image.materials.toLowerCase().includes(selectedMaterial.toLowerCase());
+      image.materials.toLowerCase() === selectedMaterial.toLowerCase();
     
     return matchesSearch && matchesMaterial;
   });
@@ -74,31 +86,47 @@ export const Gallery = ({ images }: GalleryProps) => {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
           </div>
           
-          <button 
+          <Button 
             onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center gap-1 px-4 py-2 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
+            variant="outline"
+            className="flex items-center gap-2"
           >
             <Filter className="h-5 w-5" />
-            <span>Filtros</span>
-          </button>
+            Filtros
+          </Button>
         </div>
 
         {showFilters && (
           <div className="bg-gray-50 p-4 rounded-md">
             <div className="space-y-4">
               <div>
-                <label className="text-sm font-medium mb-1 block">Material:</label>
-                <Select value={selectedMaterial} onValueChange={setSelectedMaterial}>
-                  <SelectTrigger>
+                <label className="text-sm font-medium mb-2 block">Material:</label>
+                <Select 
+                  value={selectedMaterial} 
+                  onValueChange={handleMaterialChange}
+                >
+                  <SelectTrigger className="w-full">
                     <SelectValue placeholder="Selecione um material" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="">Todos os materiais</SelectItem>
                     {allMaterials.map((material, index) => (
-                      <SelectItem key={index} value={material}>{material}</SelectItem>
+                      <SelectItem key={index} value={material}>
+                        {material}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
+              </div>
+              
+              <div className="flex justify-end">
+                <Button 
+                  variant="outline"
+                  size="sm"
+                  onClick={clearFilters}
+                >
+                  Limpar filtros
+                </Button>
               </div>
             </div>
           </div>
