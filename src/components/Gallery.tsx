@@ -109,7 +109,7 @@ export const Gallery = ({ images }: GalleryProps) => {
                     <SelectValue placeholder="Selecione um material" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Todos os materiais</SelectItem>
+                    <SelectItem value="all">Todos os materiais</SelectItem>
                     {allMaterials.map((material, index) => (
                       <SelectItem key={index} value={material}>
                         {material}
