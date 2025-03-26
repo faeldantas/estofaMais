@@ -69,7 +69,7 @@ const AdminGallery = () => {
   const [galleryItems, setGalleryItems] = useState<GalleryImage[]>([
     {
       id: 1,
-      src: "https://images.unsplash.com/photo-1721322800607-8c38375eef04",
+      src: "https://i.pinimg.com/736x/a8/e1/ea/a8e1ea4b2a8ee4728d34da005563e28c.jpg",
       alt: "Sofá reformado",
       category: "sofas",
       materials: "Veludo azul",
@@ -79,7 +79,7 @@ const AdminGallery = () => {
     },
     {
       id: 2,
-      src: "https://images.unsplash.com/photo-1582562124811-c09040d0a901",
+      src: "https://i.pinimg.com/736x/cd/cf/30/cdcf30541a308e158c1055242e423261.jpg",
       alt: "Cadeira de jantar reformada",
       category: "chairs",
       materials: "Linho bege",
@@ -89,7 +89,7 @@ const AdminGallery = () => {
     },
     {
       id: 3,
-      src: "https://images.unsplash.com/photo-1472396961693-142e6e269027",
+      src: "https://i.pinimg.com/736x/a5/17/d2/a517d2c4b5b9f315533a20d8bdebeb69.jpg",
       alt: "Interior de carro reformado",
       category: "cars",
       materials: "Couro sintético preto",

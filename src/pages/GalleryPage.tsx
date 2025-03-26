@@ -32,7 +32,7 @@ const GalleryPage = () => {
   const galleryItems: GalleryImage[] = [
     {
       id: 1,                           // Identificador único do item
-      src: "https://images.unsplash.com/photo-1721322800607-8c38375eef04", // URL da imagem
+      src: "https://i.pinimg.com/736x/a8/e1/ea/a8e1ea4b2a8ee4728d34da005563e28c.jpg", // URL da imagem
       alt: "Sofá reformado",           // Texto alternativo para acessibilidade
       category: "sofas",               // Categoria do item (usado para filtragem)
       materials: "Veludo azul",        // Material utilizado no projeto
@@ -42,7 +42,7 @@ const GalleryPage = () => {
     },
     {
       id: 2,
-      src: "https://images.unsplash.com/photo-1582562124811-c09040d0a901",
+      src: "https://i.pinimg.com/736x/1f/4e/3c/1f4e3c05141d10ed5e69b14f743fadc2.jpg",
       alt: "Cadeira de jantar reformada",
       category: "chairs",
       materials: "Linho bege",
@@ -52,7 +52,7 @@ const GalleryPage = () => {
     },
     {
       id: 3,
-      src: "https://images.unsplash.com/photo-1472396961693-142e6e269027",
+      src: "https://i.pinimg.com/736x/a5/17/d2/a517d2c4b5b9f315533a20d8bdebeb69.jpg",
       alt: "Interior de carro reformado",
       category: "cars",
       materials: "Couro sintético preto",
@@ -62,7 +62,7 @@ const GalleryPage = () => {
     },
     {
       id: 4,
-      src: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc",
+      src: "https://i.pinimg.com/736x/57/6d/38/576d38245dc567715fe5ea7e00cd5f8f.jpg",
       alt: "Sofá de canto reformado",
       category: "sofas",
       materials: "Suede marrom",
@@ -72,7 +72,7 @@ const GalleryPage = () => {
     },
     {
       id: 5,
-      src: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7",
+      src: "https://i.pinimg.com/736x/85/58/13/85581307f7e25277f662595d0a2fc828.jpg",
       alt: "Poltrona reformada",
       category: "chairs",
       materials: "Veludo verde",
@@ -82,7 +82,7 @@ const GalleryPage = () => {
     },
     {
       id: 6,
-      src: "https://images.unsplash.com/photo-1558211583-d26f610c1eb1",
+      src: "https://i.pinimg.com/736x/de/d5/9a/ded59af5dc1f80a155fe42ce046d42c1.jpg",
       alt: "Interior de van reformado",
       category: "cars",
       materials: "Couro sintético branco",
@@ -92,7 +92,7 @@ const GalleryPage = () => {
     },
     {
       id: 7,
-      src: "https://images.unsplash.com/photo-1519947486511-46149fa0a254",
+      src: "https://i.pinimg.com/736x/69/29/70/692970b573b57d6a331d9104f600ffe3.jpg",
       alt: "Sofá retrátil reformado",
       category: "sofas",
       materials: "Chenille cinza",
@@ -102,7 +102,7 @@ const GalleryPage = () => {
     },
     {
       id: 8,
-      src: "https://images.unsplash.com/photo-1592078615290-033ee584e267",
+      src: "https://i.pinimg.com/736x/16/f2/ac/16f2ac49a0e4f0fa23ffd68721368260.jpg",
       alt: "Cadeiras para área externa",
       category: "chairs",
       materials: "Tecido impermeável",
@@ -112,7 +112,7 @@ const GalleryPage = () => {
     },
     {
       id: 9,
-      src: "https://images.unsplash.com/photo-1556189250-72ba954cfc2b",
+      src: "https://i.pinimg.com/736x/48/d3/e1/48d3e1ca27cd2d2f64a62f637d63ce27.jpg",
       alt: "Interior de barco reformado",
       category: "cars",
       materials: "Couro náutico",
