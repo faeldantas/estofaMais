@@ -44,7 +44,7 @@ const HomePage = () => {
               <Button asChild size="lg" className="bg-white text-blue-600 hover:bg-gray-100">
                 <Link to="/orcamento">Solicitar Orçamento</Link>
               </Button>
-              <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-blue-600">
+              <Button asChild size="lg" variant="outline" className="border-white text-white bg-blue-500 hover:bg-white hover:text-blue-600">
                 <Link to="/galeria">Ver Trabalhos</Link>
               </Button>
             </div>
