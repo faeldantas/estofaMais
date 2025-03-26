@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
+import { Camera, X } from "lucide-react";
 
 const quoteFormSchema = z.object({
   name: z.string().min(3, { message: "Nome deve ter pelo menos 3 caracteres" }),
@@ -18,6 +19,7 @@ const quoteFormSchema = z.object({
   serviceType: z.string().min(1, { message: "Selecione um tipo de serviço" }),
   itemDescription: z.string().min(10, { message: "Descrição deve ter pelo menos 10 caracteres" }),
   message: z.string().optional(),
+  images: z.array(z.instanceof(File)).optional(),
 });
 
 type QuoteFormValues = z.infer<typeof quoteFormSchema>;
@@ -25,6 +27,7 @@ type QuoteFormValues = z.infer<typeof quoteFormSchema>;
 const QuotePage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasSubmitted, setHasSubmitted] = useState(false);
+  const [imagePreview, setImagePreview] = useState<string[]>([]);
 
   const form = useForm<QuoteFormValues>({
     resolver: zodResolver(quoteFormSchema),
@@ -35,8 +38,46 @@ const QuotePage = () => {
       serviceType: "",
       itemDescription: "",
       message: "",
+      images: [],
     },
   });
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const files = Array.from(e.target.files);
+      const currentImages = form.getValues("images") || [];
+      const newImages = [...currentImages, ...files];
+      
+      // Limit to 3 images
+      if (newImages.length > 3) {
+        toast({
+          title: "Limite de imagens",
+          description: "Você pode enviar no máximo 3 imagens.",
+          variant: "destructive"
+        });
+        return;
+      }
+      
+      form.setValue("images", newImages);
+      
+      // Create preview URLs
+      const newPreviews = files.map(file => URL.createObjectURL(file));
+      setImagePreview(prev => [...prev, ...newPreviews]);
+    }
+  };
+
+  const removeImage = (index: number) => {
+    const currentImages = form.getValues("images") || [];
+    const newImages = [...currentImages];
+    newImages.splice(index, 1);
+    form.setValue("images", newImages);
+    
+    // Update preview URLs
+    const newPreview = [...imagePreview];
+    URL.revokeObjectURL(newPreview[index]); // Clean up the URL
+    newPreview.splice(index, 1);
+    setImagePreview(newPreview);
+  };
 
   const onSubmit = (data: QuoteFormValues) => {
     setIsSubmitting(true);
@@ -51,6 +92,10 @@ const QuotePage = () => {
         title: "Orçamento solicitado com sucesso!",
         description: "Entraremos em contato em breve.",
       });
+      
+      // Clean up preview URLs
+      imagePreview.forEach(url => URL.revokeObjectURL(url));
+      setImagePreview([]);
       
       form.reset();
     }, 1500);
@@ -190,6 +235,46 @@ const QuotePage = () => {
                         </FormItem>
                       )}
                     />
+
+                    <FormItem>
+                      <FormLabel>Fotos do Item (opcional)</FormLabel>
+                      <FormDescription className="mb-2">
+                        Envie até 3 fotos do item que deseja reformar. Isso nos ajudará a fornecer um orçamento mais preciso.
+                      </FormDescription>
+                      
+                      <div className="flex flex-wrap gap-4 mb-4">
+                        {imagePreview.map((url, index) => (
+                          <div key={index} className="relative">
+                            <img 
+                              src={url} 
+                              alt={`Preview ${index + 1}`} 
+                              className="w-24 h-24 object-cover rounded-md border border-gray-200" 
+                            />
+                            <button 
+                              type="button"
+                              onClick={() => removeImage(index)} 
+                              className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                            >
+                              <X className="h-4 w-4" />
+                            </button>
+                          </div>
+                        ))}
+                        
+                        {imagePreview.length < 3 && (
+                          <label className="flex flex-col items-center justify-center w-24 h-24 border-2 border-dashed border-gray-300 rounded-md cursor-pointer hover:bg-gray-50">
+                            <Camera className="h-6 w-6 text-gray-400" />
+                            <span className="mt-2 text-xs text-gray-500">Adicionar foto</span>
+                            <input 
+                              type="file" 
+                              accept="image/*" 
+                              className="hidden" 
+                              onChange={handleImageUpload}
+                              multiple={imagePreview.length < 2}
+                            />
+                          </label>
+                        )}
+                      </div>
+                    </FormItem>
 
                     <div className="mt-6">
                       <Button type="submit" className="w-full" disabled={isSubmitting}>
