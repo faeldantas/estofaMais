@@ -14,6 +14,14 @@ import ContactPage from "./pages/ContactPage";
 import AboutPage from "./pages/AboutPage";
 import BlogPage from "./pages/BlogPage";
 import NotFound from "./pages/NotFound";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminGallery from "./pages/admin/AdminGallery";
+
+// Componentes para autenticação e proteção de rotas
+import { AuthProvider } from "./contexts/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 /**
  * Criação do cliente de consulta para o React Query
@@ -29,6 +37,7 @@ const queryClient = new QueryClient();
  * 2. Provedor de tooltips para dicas contextuais
  * 3. Componentes Toaster para notificações toast
  * 4. Sistema de roteamento com react-router-dom
+ * 5. Provedor de autenticação para gerenciar login/logout e permissões
  * 
  * O roteamento mapeia URLs para os diferentes componentes de página,
  * permitindo navegação sem recarregar a página inteira.
@@ -39,21 +48,37 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Routes>
-          {/* Rota para a página inicial */}
-          <Route path="/" element={<HomePage />} />
-          
-          {/* Rotas para as páginas principais do site */}
-          <Route path="/servicos" element={<ServicesPage />} />
-          <Route path="/galeria" element={<GalleryPage />} />
-          <Route path="/orcamento" element={<QuotePage />} />
-          <Route path="/contato" element={<ContactPage />} />
-          <Route path="/sobre" element={<AboutPage />} />
-          <Route path="/blog" element={<BlogPage />} />
-          
-          {/* Rota curinga que captura URLs inválidas */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <AuthProvider>
+          <Routes>
+            {/* Rotas públicas */}
+            <Route path="/" element={<HomePage />} />
+            <Route path="/servicos" element={<ServicesPage />} />
+            <Route path="/galeria" element={<GalleryPage />} />
+            <Route path="/orcamento" element={<QuotePage />} />
+            <Route path="/contato" element={<ContactPage />} />
+            <Route path="/sobre" element={<AboutPage />} />
+            <Route path="/blog" element={<BlogPage />} />
+            
+            {/* Rotas de autenticação */}
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/registrar" element={<RegisterPage />} />
+            
+            {/* Rotas protegidas de administrador */}
+            <Route path="/admin" element={
+              <ProtectedRoute adminOnly>
+                <AdminDashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/galeria" element={
+              <ProtectedRoute adminOnly>
+                <AdminGallery />
+              </ProtectedRoute>
+            } />
+            
+            {/* Rota curinga que captura URLs inválidas */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
