@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { 
   Dialog, 
@@ -7,7 +8,7 @@ import {
   DialogTitle 
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Search, Filter, Palette, DollarSign, Fabric } from "lucide-react";
+import { Search, Filter, Palette, DollarSign, Shirt } from "lucide-react";
 import { 
   Select, 
   SelectContent, 
@@ -141,7 +142,7 @@ export const Gallery = ({ images }: GalleryProps) => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="text-sm font-medium mb-2 flex items-center gap-2">
-                    <Fabric className="h-4 w-4" /> Material:
+                    <Shirt className="h-4 w-4" /> Material:
                   </label>
                   <Select 
                     value={selectedMaterial || "all"} 
