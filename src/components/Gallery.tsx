@@ -22,6 +22,7 @@ import { Badge } from "@/components/ui/badge";
 
 /**
  * Interface que define a estrutura de um item da galeria
+ * Especifica todos os dados necessários para exibir e filtrar um projeto
  */
 export interface GalleryImage {
   id: number;           // Identificador único da imagem
@@ -36,13 +37,21 @@ export interface GalleryImage {
 
 /**
  * Interface para as props do componente Gallery
+ * Define quais dados o componente espera receber
  */
 interface GalleryProps {
   images: GalleryImage[];  // Array de imagens a serem exibidas
 }
 
 /**
- * Componente Gallery - Exibe uma galeria de imagens com recursos de filtragem e pesquisa
+ * Componente Gallery - Exibe uma galeria de imagens com recursos avançados
+ * 
+ * Funcionalidades:
+ * - Exibição de projetos em formato de grade
+ * - Filtragem por texto (pesquisa)
+ * - Filtragem por material, cor e faixa de preço
+ * - Visualização detalhada de cada projeto em modal
+ * - Interface responsiva e interativa
  */
 export const Gallery = ({ images }: GalleryProps) => {
   // Estados para controlar a interface e filtragem
@@ -64,6 +73,7 @@ export const Gallery = ({ images }: GalleryProps) => {
 
   /**
    * Abre o lightbox para mostrar detalhes da imagem
+   * @param image Objeto da imagem selecionada para visualização
    */
   const openLightbox = (image: GalleryImage) => {
     setSelectedImage(image);
@@ -78,6 +88,7 @@ export const Gallery = ({ images }: GalleryProps) => {
 
   /**
    * Manipula mudança no filtro de material
+   * @param value Valor do material selecionado
    */
   const handleMaterialChange = (value: string) => {
     setSelectedMaterial(value === "all" ? "" : value);
@@ -85,6 +96,7 @@ export const Gallery = ({ images }: GalleryProps) => {
 
   /**
    * Manipula mudança no filtro de cor
+   * @param value Valor da cor selecionada
    */
   const handleColorChange = (value: string) => {
     setSelectedColor(value === "all" ? "" : value);
@@ -92,6 +104,7 @@ export const Gallery = ({ images }: GalleryProps) => {
 
   /**
    * Manipula mudança na faixa de preço
+   * @param value Array com valores mínimo e máximo de preço
    */
   const handlePriceRangeChange = (value: number[]) => {
     setPriceRange([value[0], value[1]]);
@@ -99,6 +112,7 @@ export const Gallery = ({ images }: GalleryProps) => {
 
   /**
    * Limpa todos os filtros aplicados
+   * Restaura os estados para seus valores iniciais
    */
   const clearFilters = () => {
     setSelectedMaterial("");
@@ -109,6 +123,7 @@ export const Gallery = ({ images }: GalleryProps) => {
 
   /**
    * Filtra imagens com base em todos os critérios selecionados
+   * Aplica filtros de pesquisa, material, cor e preço
    */
   const filteredImages = images.filter(image => {
     // Corresponde ao termo de pesquisa (título ou material)
@@ -134,6 +149,8 @@ export const Gallery = ({ images }: GalleryProps) => {
 
   /**
    * Formata preço como moeda brasileira (R$)
+   * @param price Valor numérico a ser formatado
+   * @returns String formatada como moeda brasileira
    */
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('pt-BR', {

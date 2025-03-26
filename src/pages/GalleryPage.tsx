@@ -6,31 +6,39 @@ import { Gallery, GalleryImage } from "@/components/Gallery";
 
 /**
  * GalleryPage - Componente principal da página de galeria de trabalhos
- * Exibe projetos anteriores filtráveis por categoria
+ * Este componente gerencia a exibição e filtragem de projetos anteriores por categoria
+ * 
+ * Funcionalidades:
+ * - Filtragem de projetos por categoria (Todos, Sofás, Cadeiras, Automóveis)
+ * - Integração com o componente Gallery para exibição dos itens
+ * - Layout responsivo usando o componente Layout para manter consistência
  */
 const GalleryPage = () => {
   // Estado para armazenar a categoria selecionada pelo usuário
+  // O valor padrão "all" mostra todos os itens inicialmente
   const [selectedCategory, setSelectedCategory] = useState("all");
 
-  // Lista de categorias disponíveis para filtragem
+  // Lista de categorias disponíveis para filtragem na interface
+  // Cada categoria tem um id (usado internamente) e um nome (mostrado ao usuário)
   const categories = [
-    { id: "all", name: "Todos" },
-    { id: "sofas", name: "Sofás" },
-    { id: "chairs", name: "Cadeiras" },
-    { id: "cars", name: "Automóveis" },
+    { id: "all", name: "Todos" },      // Mostra todos os itens independente da categoria
+    { id: "sofas", name: "Sofás" },    // Filtra apenas trabalhos relacionados a sofás
+    { id: "chairs", name: "Cadeiras" }, // Filtra apenas trabalhos relacionados a cadeiras
+    { id: "cars", name: "Automóveis" }, // Filtra apenas trabalhos relacionados a automóveis
   ];
 
-  // Array de itens da galeria com propriedades detalhadas para demonstração de filtragem
+  // Array de itens da galeria com propriedades detalhadas
+  // Cada item representa um projeto realizado pela empresa
   const galleryItems: GalleryImage[] = [
     {
-      id: 1,
-      src: "https://images.unsplash.com/photo-1721322800607-8c38375eef04",
-      alt: "Sofá reformado",
-      category: "sofas",
-      materials: "Veludo azul",
-      title: "Reforma de Sofá 3 Lugares",
-      color: "Azul",
-      price: 1850
+      id: 1,                           // Identificador único do item
+      src: "https://images.unsplash.com/photo-1721322800607-8c38375eef04", // URL da imagem
+      alt: "Sofá reformado",           // Texto alternativo para acessibilidade
+      category: "sofas",               // Categoria do item (usado para filtragem)
+      materials: "Veludo azul",        // Material utilizado no projeto
+      title: "Reforma de Sofá 3 Lugares", // Título descritivo do projeto
+      color: "Azul",                   // Cor principal do projeto
+      price: 1850                      // Preço do serviço em reais
     },
     {
       id: 2,
@@ -114,9 +122,9 @@ const GalleryPage = () => {
     }
   ];
 
-  // Filtragem dos itens da galeria baseada na categoria selecionada
-  // Se "all" estiver selecionado, mostra todos os itens
-  // Caso contrário, filtra apenas os itens da categoria selecionada
+  // Filtragem dos itens da galeria com base na categoria selecionada
+  // Se "all" estiver selecionado, retorna todos os itens
+  // Caso contrário, filtra apenas os itens da categoria específica
   const filteredGalleryItems = selectedCategory === "all" 
     ? galleryItems 
     : galleryItems.filter(item => item.category === selectedCategory);
@@ -125,7 +133,7 @@ const GalleryPage = () => {
     <Layout>
       <section className="py-12">
         <div className="container mx-auto px-4 md:px-6">
-          {/* Cabeçalho da página */}
+          {/* Cabeçalho da página com título e descrição */}
           <div className="text-center mb-12">
             <h1 className="text-4xl font-bold mb-4">Nossa Galeria</h1>
             <p className="text-gray-600 max-w-2xl mx-auto">
@@ -134,7 +142,7 @@ const GalleryPage = () => {
             </p>
           </div>
 
-          {/* Componente de abas para filtrar por categoria */}
+          {/* Componente de abas para filtrar projetos por categoria */}
           <Tabs defaultValue="all" onValueChange={setSelectedCategory} className="w-full max-w-3xl mx-auto mb-10">
             <TabsList className="grid grid-cols-4 w-full">
               {categories.map(category => (
