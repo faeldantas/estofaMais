@@ -20,62 +20,86 @@ import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
 
+/**
+ * Interface que define a estrutura de um item da galeria
+ */
 export interface GalleryImage {
-  id: number;
-  src: string;
-  alt: string;
-  category: string;
-  materials: string;
-  title: string;
-  color?: string; // Add color property
-  price?: number; // Add price property
+  id: number;           // Identificador único da imagem
+  src: string;          // URL da imagem
+  alt: string;          // Texto alternativo para acessibilidade
+  category: string;     // Categoria (sofas, chairs, cars)
+  materials: string;    // Materiais utilizados na reforma
+  title: string;        // Título/nome do projeto
+  color?: string;       // Cor principal (opcional)
+  price?: number;       // Preço do serviço (opcional)
 }
 
+/**
+ * Interface para as props do componente Gallery
+ */
 interface GalleryProps {
-  images: GalleryImage[];
+  images: GalleryImage[];  // Array de imagens a serem exibidas
 }
 
+/**
+ * Componente Gallery - Exibe uma galeria de imagens com recursos de filtragem e pesquisa
+ */
 export const Gallery = ({ images }: GalleryProps) => {
-  const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedMaterial, setSelectedMaterial] = useState<string>("");
-  const [selectedColor, setSelectedColor] = useState<string>("");
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
-  const [showFilters, setShowFilters] = useState(false);
+  // Estados para controlar a interface e filtragem
+  const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null);  // Imagem selecionada para visualização detalhada
+  const [searchTerm, setSearchTerm] = useState("");                              // Termo de pesquisa
+  const [selectedMaterial, setSelectedMaterial] = useState<string>("");          // Material selecionado para filtro
+  const [selectedColor, setSelectedColor] = useState<string>("");                // Cor selecionada para filtro
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);     // Faixa de preço para filtro
+  const [showFilters, setShowFilters] = useState(false);                         // Controla a exibição do painel de filtros
 
-  // Extract unique materials and colors for filter options
-  const allMaterials = Array.from(new Set(images.map(img => img.materials)));
-  const allColors = Array.from(new Set(images.filter(img => img.color).map(img => img.color as string)));
+  // Extrai valores únicos para as opções de filtro
+  const allMaterials = Array.from(new Set(images.map(img => img.materials)));    // Lista de materiais únicos
+  const allColors = Array.from(new Set(images.filter(img => img.color).map(img => img.color as string)));  // Lista de cores únicas
   
-  // Find min and max prices for the slider
+  // Encontra preços mínimo e máximo para o slider
   const prices = images.filter(img => img.price !== undefined).map(img => img.price as number);
   const minPrice = prices.length > 0 ? Math.min(...prices) : 0;
   const maxPrice = prices.length > 0 ? Math.max(...prices) : 1000;
 
+  /**
+   * Abre o lightbox para mostrar detalhes da imagem
+   */
   const openLightbox = (image: GalleryImage) => {
     setSelectedImage(image);
   };
 
+  /**
+   * Fecha o lightbox
+   */
   const closeLightbox = () => {
     setSelectedImage(null);
   };
 
-  // Handle material selection
+  /**
+   * Manipula mudança no filtro de material
+   */
   const handleMaterialChange = (value: string) => {
     setSelectedMaterial(value === "all" ? "" : value);
   };
 
-  // Handle color selection
+  /**
+   * Manipula mudança no filtro de cor
+   */
   const handleColorChange = (value: string) => {
     setSelectedColor(value === "all" ? "" : value);
   };
 
-  // Handle price range change
+  /**
+   * Manipula mudança na faixa de preço
+   */
   const handlePriceRangeChange = (value: number[]) => {
     setPriceRange([value[0], value[1]]);
   };
 
-  // Clear all filters
+  /**
+   * Limpa todos os filtros aplicados
+   */
   const clearFilters = () => {
     setSelectedMaterial("");
     setSelectedColor("");
@@ -83,25 +107,34 @@ export const Gallery = ({ images }: GalleryProps) => {
     setSearchTerm("");
   };
 
-  // Filter images based on search term, selected material, color, and price range
+  /**
+   * Filtra imagens com base em todos os critérios selecionados
+   */
   const filteredImages = images.filter(image => {
+    // Corresponde ao termo de pesquisa (título ou material)
     const matchesSearch = searchTerm === "" || 
       image.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       image.materials.toLowerCase().includes(searchTerm.toLowerCase());
     
+    // Corresponde ao material selecionado
     const matchesMaterial = selectedMaterial === "" || 
       image.materials.toLowerCase() === selectedMaterial.toLowerCase();
     
+    // Corresponde à cor selecionada
     const matchesColor = selectedColor === "" || 
       (image.color && image.color.toLowerCase() === selectedColor.toLowerCase());
     
+    // Corresponde à faixa de preço
     const matchesPrice = !image.price || 
       (image.price >= priceRange[0] && image.price <= priceRange[1]);
     
+    // Retorna true apenas se todos os critérios forem atendidos
     return matchesSearch && matchesMaterial && matchesColor && matchesPrice;
   });
 
-  // Format price as Brazilian currency
+  /**
+   * Formata preço como moeda brasileira (R$)
+   */
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
@@ -111,8 +144,10 @@ export const Gallery = ({ images }: GalleryProps) => {
 
   return (
     <>
+      {/* Barra de pesquisa e filtros */}
       <div className="mb-6 space-y-4">
         <div className="flex flex-col md:flex-row gap-4">
+          {/* Campo de pesquisa com ícone */}
           <div className="relative flex-1">
             <Input 
               placeholder="Pesquisar por nome ou material..."
@@ -123,6 +158,7 @@ export const Gallery = ({ images }: GalleryProps) => {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
           </div>
           
+          {/* Botão para mostrar/esconder filtros avançados */}
           <Button 
             onClick={() => setShowFilters(!showFilters)}
             variant="outline"
@@ -130,16 +166,20 @@ export const Gallery = ({ images }: GalleryProps) => {
           >
             <Filter className="h-5 w-5" />
             Filtros
+            {/* Badge que indica filtros ativos */}
             {(selectedMaterial || selectedColor || priceRange[0] > minPrice || priceRange[1] < maxPrice) && (
               <Badge variant="secondary" className="ml-2">Ativos</Badge>
             )}
           </Button>
         </div>
 
+        {/* Painel de filtros avançados (visível apenas quando showFilters é true) */}
         {showFilters && (
           <div className="bg-gray-50 p-4 rounded-md">
             <div className="space-y-4">
+              {/* Grid para filtros de material e cor */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Seletor de material */}
                 <div>
                   <label className="text-sm font-medium mb-2 flex items-center gap-2">
                     <Shirt className="h-4 w-4" /> Material:
@@ -162,6 +202,7 @@ export const Gallery = ({ images }: GalleryProps) => {
                   </Select>
                 </div>
                 
+                {/* Seletor de cor */}
                 <div>
                   <label className="text-sm font-medium mb-2 flex items-center gap-2">
                     <Palette className="h-4 w-4" /> Cor:
@@ -178,6 +219,7 @@ export const Gallery = ({ images }: GalleryProps) => {
                       {allColors.map((color, index) => (
                         <SelectItem key={index} value={color}>
                           <div className="flex items-center gap-2">
+                            {/* Amostra visual da cor */}
                             <div 
                               className="w-4 h-4 rounded-full" 
                               style={{ backgroundColor: color.toLowerCase() }}
@@ -191,6 +233,7 @@ export const Gallery = ({ images }: GalleryProps) => {
                 </div>
               </div>
               
+              {/* Slider para faixa de preço */}
               <div>
                 <label className="text-sm font-medium mb-2 flex items-center gap-2">
                   <DollarSign className="h-4 w-4" /> Faixa de Preço: {formatPrice(priceRange[0])} - {formatPrice(priceRange[1])}
@@ -208,6 +251,7 @@ export const Gallery = ({ images }: GalleryProps) => {
                 </div>
               </div>
               
+              {/* Botão para limpar filtros */}
               <div className="flex justify-end">
                 <Button 
                   variant="outline"
@@ -221,6 +265,7 @@ export const Gallery = ({ images }: GalleryProps) => {
           </div>
         )}
 
+        {/* Mensagem de "nenhum resultado" quando não há imagens após filtro */}
         {filteredImages.length === 0 ? (
           <div className="text-center py-12 bg-gray-50 rounded-lg">
             <p className="text-lg text-gray-500">Nenhum resultado encontrado. Tente ajustar seus critérios de busca.</p>
@@ -230,6 +275,7 @@ export const Gallery = ({ images }: GalleryProps) => {
         )}
       </div>
 
+      {/* Grid de cartões de imagem */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredImages.map((image) => (
           <div 
@@ -237,19 +283,23 @@ export const Gallery = ({ images }: GalleryProps) => {
             className="overflow-hidden rounded-lg shadow-md cursor-pointer hover:shadow-xl transition-shadow"
             onClick={() => openLightbox(image)}
           >
+            {/* Container da imagem com efeito hover */}
             <div className="relative h-64">
               <img 
                 src={image.src} 
                 alt={image.alt} 
                 className="w-full h-full object-cover"
               />
+              {/* Overlay com efeito de fade-in no hover */}
               <div className="absolute inset-0 bg-black bg-opacity-40 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center text-white">
                 <p className="font-semibold text-lg">Ver detalhes</p>
               </div>
             </div>
+            {/* Informações do item */}
             <div className="p-4">
               <h3 className="font-semibold text-lg">{image.title}</h3>
               <p className="text-gray-600">Material: {image.materials}</p>
+              {/* Exibe cor se disponível */}
               {image.color && (
                 <div className="flex items-center gap-2 mt-1">
                   <span className="text-gray-600">Cor:</span>
@@ -262,6 +312,7 @@ export const Gallery = ({ images }: GalleryProps) => {
                   </div>
                 </div>
               )}
+              {/* Exibe preço se disponível */}
               {image.price && (
                 <p className="text-gray-600 mt-1">Preço: {formatPrice(image.price)}</p>
               )}
@@ -270,6 +321,7 @@ export const Gallery = ({ images }: GalleryProps) => {
         ))}
       </div>
 
+      {/* Modal/Dialog para visualização detalhada da imagem selecionada */}
       <Dialog open={!!selectedImage} onOpenChange={() => closeLightbox()}>
         <DialogContent className="max-w-3xl">
           {selectedImage && (
@@ -279,6 +331,7 @@ export const Gallery = ({ images }: GalleryProps) => {
                 <DialogDescription>
                   <div className="space-y-2 mt-2">
                     <p>Material: {selectedImage.materials}</p>
+                    {/* Exibe cor no modal se disponível */}
                     {selectedImage.color && (
                       <div className="flex items-center gap-2">
                         <span>Cor:</span>
@@ -291,12 +344,14 @@ export const Gallery = ({ images }: GalleryProps) => {
                         </div>
                       </div>
                     )}
+                    {/* Exibe preço no modal se disponível */}
                     {selectedImage.price && (
                       <p>Preço: {formatPrice(selectedImage.price)}</p>
                     )}
                   </div>
                 </DialogDescription>
               </DialogHeader>
+              {/* Imagem ampliada */}
               <div className="mt-4">
                 <img 
                   src={selectedImage.src} 

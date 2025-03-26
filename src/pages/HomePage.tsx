@@ -6,7 +6,12 @@ import { Sofa, Car, Armchair } from "lucide-react";
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import { Card, CardContent } from "@/components/ui/card";
 
+/**
+ * HomePage - Componente principal da página inicial
+ * Exibe seções informativas sobre a empresa e seus serviços
+ */
 const HomePage = () => {
+  // Lista de serviços oferecidos com seus ícones e descrições
   const services = [
     {
       id: 1,
@@ -30,7 +35,7 @@ const HomePage = () => {
 
   return (
     <Layout>
-      {/* Hero Section */}
+      {/* Hero Section - Banner principal com chamada para ação */}
       <section className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-20">
         <div className="container mx-auto px-4 md:px-6">
           <div className="max-w-3xl mx-auto text-center">
@@ -41,9 +46,11 @@ const HomePage = () => {
               Somos especialistas em dar vida nova a seus móveis favoritos com materiais de alta qualidade e técnicas modernas.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
+              {/* Botão de solicitar orçamento - com fundo branco */}
               <Button asChild size="lg" className="bg-white text-blue-600 hover:bg-gray-100">
                 <Link to="/orcamento">Solicitar Orçamento</Link>
               </Button>
+              {/* Botão de ver trabalhos - com fundo azul para melhor contraste */}
               <Button asChild size="lg" variant="outline" className="border-white text-white bg-blue-500 hover:bg-white hover:text-blue-600">
                 <Link to="/galeria">Ver Trabalhos</Link>
               </Button>
@@ -52,7 +59,7 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Services Overview */}
+      {/* Services Overview - Visão geral dos serviços oferecidos */}
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4 md:px-6">
           <div className="text-center mb-12">
@@ -62,9 +69,11 @@ const HomePage = () => {
             </p>
           </div>
 
+          {/* Grade de cards de serviços */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {services.map((service) => (
               <div key={service.id} className="bg-white p-6 rounded-lg shadow-md text-center hover:shadow-lg transition-shadow">
+                {/* Ícone do serviço */}
                 <div className="mb-4 inline-flex items-center justify-center w-14 h-14 bg-blue-100 text-blue-600 rounded-full">
                   <service.icon className="h-7 w-7" />
                 </div>
@@ -79,12 +88,13 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Why Choose Us */}
+      {/* Why Choose Us - Seção de diferenciais da empresa */}
       <section className="py-16">
         <div className="container mx-auto px-4 md:px-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             <div>
               <h2 className="text-3xl font-bold mb-6">Por que escolher a EstofaMais?</h2>
+              {/* Lista de diferenciais numerados */}
               <div className="space-y-4">
                 <div className="flex items-start">
                   <div className="flex-shrink-0 w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mr-4">
@@ -118,6 +128,7 @@ const HomePage = () => {
                 <Link to="/sobre">Conheça Nossa História</Link>
               </Button>
             </div>
+            {/* Imagem ilustrativa da seção */}
             <div className="rounded-lg overflow-hidden shadow-lg">
               <img 
                 src="https://images.unsplash.com/photo-1721322800607-8c38375eef04" 
@@ -129,7 +140,7 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Testimonials */}
+      {/* Testimonials - Seção de depoimentos */}
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4 md:px-6">
           <div className="text-center mb-12">
@@ -139,6 +150,7 @@ const HomePage = () => {
             </p>
           </div>
 
+          {/* Carrossel de depoimentos */}
           <Carousel className="w-full max-w-4xl mx-auto">
             <CarouselContent>
               {[1, 2, 3].map((index) => (
@@ -164,7 +176,7 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* CTA Section */}
+      {/* CTA Section - Chamada para ação final */}
       <section className="py-16 bg-blue-600 text-white">
         <div className="container mx-auto px-4 md:px-6 text-center">
           <h2 className="text-3xl font-bold mb-6">Pronto para transformar seus estofados?</h2>

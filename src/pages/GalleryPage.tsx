@@ -4,9 +4,15 @@ import Layout from "@/components/Layout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Gallery, GalleryImage } from "@/components/Gallery";
 
+/**
+ * GalleryPage - Componente principal da página de galeria de trabalhos
+ * Exibe projetos anteriores filtráveis por categoria
+ */
 const GalleryPage = () => {
+  // Estado para armazenar a categoria selecionada pelo usuário
   const [selectedCategory, setSelectedCategory] = useState("all");
 
+  // Lista de categorias disponíveis para filtragem
   const categories = [
     { id: "all", name: "Todos" },
     { id: "sofas", name: "Sofás" },
@@ -14,7 +20,7 @@ const GalleryPage = () => {
     { id: "cars", name: "Automóveis" },
   ];
 
-  // Gallery items with expanded properties for better filtering demonstration
+  // Array de itens da galeria com propriedades detalhadas para demonstração de filtragem
   const galleryItems: GalleryImage[] = [
     {
       id: 1,
@@ -108,7 +114,9 @@ const GalleryPage = () => {
     }
   ];
 
-  // Filter gallery items based on selected category
+  // Filtragem dos itens da galeria baseada na categoria selecionada
+  // Se "all" estiver selecionado, mostra todos os itens
+  // Caso contrário, filtra apenas os itens da categoria selecionada
   const filteredGalleryItems = selectedCategory === "all" 
     ? galleryItems 
     : galleryItems.filter(item => item.category === selectedCategory);
@@ -117,6 +125,7 @@ const GalleryPage = () => {
     <Layout>
       <section className="py-12">
         <div className="container mx-auto px-4 md:px-6">
+          {/* Cabeçalho da página */}
           <div className="text-center mb-12">
             <h1 className="text-4xl font-bold mb-4">Nossa Galeria</h1>
             <p className="text-gray-600 max-w-2xl mx-auto">
@@ -125,6 +134,7 @@ const GalleryPage = () => {
             </p>
           </div>
 
+          {/* Componente de abas para filtrar por categoria */}
           <Tabs defaultValue="all" onValueChange={setSelectedCategory} className="w-full max-w-3xl mx-auto mb-10">
             <TabsList className="grid grid-cols-4 w-full">
               {categories.map(category => (
@@ -135,6 +145,7 @@ const GalleryPage = () => {
             </TabsList>
           </Tabs>
 
+          {/* Componente Gallery que recebe e exibe as imagens filtradas */}
           <Gallery images={filteredGalleryItems} />
         </div>
       </section>
