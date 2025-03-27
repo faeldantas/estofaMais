@@ -138,23 +138,23 @@ const MaterialSelector = ({ onSelectMaterial }: MaterialSelectorProps) => {
         type="button" 
         variant="outline" 
         onClick={() => setIsOpen(true)}
-        className="w-full"
+        className="w-full bg-brand-green-light/30 hover:bg-brand-green-light/50 text-brand-dark border-brand-green"
       >
         Selecionar Material
       </Button>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="sm:max-w-[800px] max-h-[80vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-[800px] max-h-[80vh] overflow-y-auto bg-brand-cream border-brand-green">
           <DialogHeader>
-            <DialogTitle>Selecione um Material</DialogTitle>
+            <DialogTitle className="text-brand-dark text-xl">Selecione um Material</DialogTitle>
           </DialogHeader>
           
           <div className="relative mb-4">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-brand-dark" />
             <Input
               type="text"
               placeholder="Buscar por nome, tipo ou cor..."
-              className="pl-10"
+              className="pl-10 border-brand-green focus-visible:ring-brand-green"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -164,10 +164,10 @@ const MaterialSelector = ({ onSelectMaterial }: MaterialSelectorProps) => {
             {filteredMaterials.map((material) => (
               <div 
                 key={material.id} 
-                className="bg-white rounded-lg overflow-hidden border hover:border-blue-500 hover:shadow-md transition-all cursor-pointer"
+                className="bg-white rounded-lg overflow-hidden border hover:border-brand-green hover:shadow-md transition-all cursor-pointer"
                 onClick={() => handleSelectMaterial(material)}
               >
-                <div className="aspect-square bg-gray-100 relative overflow-hidden">
+                <div className="aspect-square bg-brand-green-lighter/20 relative overflow-hidden">
                   <img 
                     src={material.imageUrl} 
                     alt={material.title} 
@@ -175,11 +175,11 @@ const MaterialSelector = ({ onSelectMaterial }: MaterialSelectorProps) => {
                     onError={(e) => (e.target as HTMLImageElement).src = "https://placehold.co/200x200?text=Material"}
                   />
                 </div>
-                <div className="p-3">
-                  <h3 className="font-medium text-sm truncate">{material.title}</h3>
+                <div className="p-3 bg-brand-cream">
+                  <h3 className="font-medium text-sm truncate text-brand-dark">{material.title}</h3>
                   <div className="flex justify-between items-center mt-1">
-                    <span className="text-xs text-gray-500">{material.type}</span>
-                    <span className="text-xs font-medium">R$ {material.price.toFixed(2)}</span>
+                    <span className="text-xs text-brand-dark/70">{material.type}</span>
+                    <span className="text-xs font-medium text-brand-green">R$ {material.price.toFixed(2)}</span>
                   </div>
                 </div>
               </div>
@@ -187,8 +187,8 @@ const MaterialSelector = ({ onSelectMaterial }: MaterialSelectorProps) => {
           </div>
           
           {filteredMaterials.length === 0 && (
-            <div className="text-center p-10">
-              <p className="text-gray-500">Nenhum material encontrado. Tente outra pesquisa.</p>
+            <div className="text-center p-10 bg-brand-green-lighter/20 rounded-lg">
+              <p className="text-brand-dark">Nenhum material encontrado. Tente outra pesquisa.</p>
             </div>
           )}
         </DialogContent>

@@ -68,8 +68,8 @@ const QuotePage = () => {
   // Estado para o modal de preço
   const [isPriceModalOpen, setIsPriceModalOpen] = useState(false);
   
-  // Estado para o range de preço
-  const [priceRange, setPriceRange] = useState<[number, number]>([500, 2000]);
+  // Estado para o range de preço - alterado para iniciar em 0
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 2000]);
 
   // Inicialização do formulário com React Hook Form
   const form = useForm<QuoteFormValues>({
@@ -81,7 +81,7 @@ const QuotePage = () => {
       serviceType: "",
       itemDescription: "",
       message: "",
-      priceRange: [500, 2000],
+      priceRange: [0, 2000], // Alterado para iniciar em 0
       images: [],
     },
   });
@@ -219,28 +219,33 @@ const QuotePage = () => {
 
   return (
     <Layout>
-      <section className="py-12 bg-gray-50">
+      <section className="py-12 bg-brand-cream/50">
         <div className="container mx-auto px-4 md:px-6">
           <div className="max-w-3xl mx-auto">
             <div className="text-center mb-10">
-              <h1 className="text-4xl font-bold mb-4">Solicite um Orçamento</h1>
-              <p className="text-gray-600">
+              <h1 className="text-4xl font-bold mb-4 text-brand-dark">Solicite um Orçamento</h1>
+              <p className="text-brand-dark/80">
                 Preencha o formulário abaixo para solicitar um orçamento personalizado para 
                 a reforma do seu estofado. Nossa equipe entrará em contato em breve.
               </p>
             </div>
 
             {hasSubmitted ? (
-              <div className="bg-green-50 border border-green-200 rounded-lg p-6 text-center">
-                <h2 className="text-2xl font-semibold text-green-700 mb-2">Orçamento Enviado!</h2>
-                <p className="text-green-600 mb-4">
+              <div className="bg-brand-green-light/30 border border-brand-green rounded-lg p-6 text-center">
+                <h2 className="text-2xl font-semibold text-brand-dark mb-2">Orçamento Enviado!</h2>
+                <p className="text-brand-dark/80 mb-4">
                   Recebemos sua solicitação de orçamento. Nossa equipe analisará as informações 
                   e entrará em contato em até 24 horas úteis.
                 </p>
-                <Button onClick={() => setHasSubmitted(false)}>Solicitar Novo Orçamento</Button>
+                <Button 
+                  onClick={() => setHasSubmitted(false)}
+                  className="bg-brand-green hover:bg-brand-green/90 text-white"
+                >
+                  Solicitar Novo Orçamento
+                </Button>
               </div>
             ) : (
-              <div className="bg-white p-8 rounded-lg shadow-md">
+              <div className="bg-white p-8 rounded-lg shadow-md border border-brand-green-light/30">
                 <Form {...form}>
                   <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -249,9 +254,13 @@ const QuotePage = () => {
                         name="name"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Nome completo</FormLabel>
+                            <FormLabel className="text-brand-dark">Nome completo</FormLabel>
                             <FormControl>
-                              <Input placeholder="Seu nome" {...field} />
+                              <Input 
+                                placeholder="Seu nome" 
+                                {...field} 
+                                className="border-brand-green-light focus-visible:ring-brand-green"
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -263,9 +272,14 @@ const QuotePage = () => {
                         name="email"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>E-mail</FormLabel>
+                            <FormLabel className="text-brand-dark">E-mail</FormLabel>
                             <FormControl>
-                              <Input type="email" placeholder="seu@email.com" {...field} />
+                              <Input 
+                                type="email" 
+                                placeholder="seu@email.com" 
+                                {...field} 
+                                className="border-brand-green-light focus-visible:ring-brand-green"
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -279,9 +293,13 @@ const QuotePage = () => {
                         name="phone"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Telefone</FormLabel>
+                            <FormLabel className="text-brand-dark">Telefone</FormLabel>
                             <FormControl>
-                              <Input placeholder="(00) 00000-0000" {...field} />
+                              <Input 
+                                placeholder="(00) 00000-0000" 
+                                {...field} 
+                                className="border-brand-green-light focus-visible:ring-brand-green"
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -293,18 +311,18 @@ const QuotePage = () => {
                         name="serviceType"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Tipo de Serviço</FormLabel>
+                            <FormLabel className="text-brand-dark">Tipo de Serviço</FormLabel>
                             <Select onValueChange={field.onChange} defaultValue={field.value}>
                               <FormControl>
-                                <SelectTrigger>
+                                <SelectTrigger className="border-brand-green-light focus:ring-brand-green">
                                   <SelectValue placeholder="Selecione o tipo de serviço" />
                                 </SelectTrigger>
                               </FormControl>
-                              <SelectContent>
-                                <SelectItem value="sofa">Reforma de Sofá</SelectItem>
-                                <SelectItem value="chair">Reforma de Cadeira</SelectItem>
-                                <SelectItem value="car">Estofamento Automotivo</SelectItem>
-                                <SelectItem value="other">Outro</SelectItem>
+                              <SelectContent className="bg-brand-cream border-brand-green-light">
+                                <SelectItem value="sofa" className="focus:bg-brand-green-light/30">Reforma de Sofá</SelectItem>
+                                <SelectItem value="chair" className="focus:bg-brand-green-light/30">Reforma de Cadeira</SelectItem>
+                                <SelectItem value="car" className="focus:bg-brand-green-light/30">Estofamento Automotivo</SelectItem>
+                                <SelectItem value="other" className="focus:bg-brand-green-light/30">Outro</SelectItem>
                               </SelectContent>
                             </Select>
                             <FormMessage />
@@ -318,11 +336,11 @@ const QuotePage = () => {
                       name="itemDescription"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Descrição do Item</FormLabel>
+                          <FormLabel className="text-brand-dark">Descrição do Item</FormLabel>
                           <FormControl>
                             <Textarea 
                               placeholder="Descreva o item a ser reformado (tipo, tamanho, estado atual, etc.)" 
-                              className="min-h-[100px]"
+                              className="min-h-[100px] border-brand-green-light focus-visible:ring-brand-green"
                               {...field} 
                             />
                           </FormControl>
@@ -334,19 +352,19 @@ const QuotePage = () => {
                     {/* Seleção de materiais */}
                     <div>
                       <div className="flex items-center justify-between mb-2">
-                        <label className="block text-sm font-medium text-gray-700">
+                        <label className="block text-sm font-medium text-brand-dark">
                           Materiais de Interesse
                         </label>
                         <MaterialSelector onSelectMaterial={handleAddMaterial} />
                       </div>
                       
                       {selectedMaterials.length > 0 ? (
-                        <div className="border rounded-md p-3 bg-gray-50">
+                        <div className="border rounded-md p-3 bg-brand-cream border-brand-green-light">
                           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
                             {selectedMaterials.map((material) => (
                               <div 
                                 key={material.id} 
-                                className="flex items-center gap-2 bg-white p-2 rounded border"
+                                className="flex items-center gap-2 bg-white p-2 rounded border border-brand-green-light/50"
                               >
                                 <img 
                                   src={material.imageUrl} 
@@ -355,8 +373,8 @@ const QuotePage = () => {
                                   onError={(e) => (e.target as HTMLImageElement).src = "https://placehold.co/80x80?text=Material"}
                                 />
                                 <div className="min-w-0 flex-1">
-                                  <p className="text-sm font-medium truncate">{material.title}</p>
-                                  <p className="text-xs text-gray-500">{material.type}</p>
+                                  <p className="text-sm font-medium truncate text-brand-dark">{material.title}</p>
+                                  <p className="text-xs text-brand-dark/70">{material.type}</p>
                                 </div>
                                 <button 
                                   type="button"
@@ -370,7 +388,7 @@ const QuotePage = () => {
                           </div>
                         </div>
                       ) : (
-                        <div className="text-center border rounded-md p-4 bg-gray-50 text-gray-500">
+                        <div className="text-center border rounded-md p-4 bg-brand-cream border-brand-green-light/50 text-brand-dark/70">
                           <p>Nenhum material selecionado. Clique em "Selecionar Material" para escolher.</p>
                         </div>
                       )}
@@ -383,12 +401,12 @@ const QuotePage = () => {
                       render={({ field }) => (
                         <FormItem>
                           <div className="flex justify-between items-center">
-                            <FormLabel>Faixa de Preço Estimada</FormLabel>
+                            <FormLabel className="text-brand-dark">Faixa de Preço Estimada</FormLabel>
                             <Button 
                               type="button"
                               variant="ghost" 
                               size="sm"
-                              className="h-8 text-blue-600"
+                              className="h-8 text-brand-green"
                               onClick={() => setIsPriceModalOpen(true)}
                             >
                               <HelpCircle size={16} className="mr-1" />
@@ -398,18 +416,18 @@ const QuotePage = () => {
                           <div className="pt-6 px-3">
                             <Slider
                               onValueChange={handlePriceRangeChange}
-                              defaultValue={[500, 2000]}
-                              min={100}
+                              defaultValue={[0, 2000]} // Alterado para iniciar em 0
+                              min={0} // Alterado para 0
                               max={5000}
                               step={100}
                               minStepsBetweenThumbs={2}
                             />
                           </div>
-                          <div className="flex justify-between mt-2 text-sm">
+                          <div className="flex justify-between mt-2 text-sm text-brand-dark">
                             <span>{formatCurrency(priceRange[0])}</span>
                             <span>{formatCurrency(priceRange[1])}</span>
                           </div>
-                          <FormDescription>
+                          <FormDescription className="text-brand-dark/70">
                             Selecione a faixa de preço que você espera investir na reforma.
                           </FormDescription>
                           <FormMessage />
@@ -422,15 +440,15 @@ const QuotePage = () => {
                       name="message"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Mensagem Adicional (opcional)</FormLabel>
+                          <FormLabel className="text-brand-dark">Mensagem Adicional (opcional)</FormLabel>
                           <FormControl>
                             <Textarea 
                               placeholder="Informações adicionais, preferências, etc." 
-                              className="min-h-[100px]"
+                              className="min-h-[100px] border-brand-green-light focus-visible:ring-brand-green"
                               {...field} 
                             />
                           </FormControl>
-                          <FormDescription>
+                          <FormDescription className="text-brand-dark/70">
                             Informações adicionais que possam nos ajudar com o orçamento.
                           </FormDescription>
                           <FormMessage />
@@ -439,8 +457,8 @@ const QuotePage = () => {
                     />
 
                     <FormItem>
-                      <FormLabel>Fotos do Item (opcional)</FormLabel>
-                      <FormDescription className="mb-2">
+                      <FormLabel className="text-brand-dark">Fotos do Item (opcional)</FormLabel>
+                      <FormDescription className="mb-2 text-brand-dark/70">
                         Envie até 3 fotos do item que deseja reformar. Isso nos ajudará a fornecer um orçamento mais preciso.
                       </FormDescription>
                       
@@ -450,7 +468,7 @@ const QuotePage = () => {
                             <img 
                               src={url} 
                               alt={`Preview ${index + 1}`} 
-                              className="w-24 h-24 object-cover rounded-md border border-gray-200" 
+                              className="w-24 h-24 object-cover rounded-md border border-brand-green-light" 
                             />
                             <button 
                               type="button"
@@ -463,9 +481,9 @@ const QuotePage = () => {
                         ))}
                         
                         {imagePreview.length < 3 && (
-                          <label className="flex flex-col items-center justify-center w-24 h-24 border-2 border-dashed border-gray-300 rounded-md cursor-pointer hover:bg-gray-50">
-                            <Camera className="h-6 w-6 text-gray-400" />
-                            <span className="mt-2 text-xs text-gray-500">Adicionar foto</span>
+                          <label className="flex flex-col items-center justify-center w-24 h-24 border-2 border-dashed border-brand-green-light rounded-md cursor-pointer hover:bg-brand-cream">
+                            <Camera className="h-6 w-6 text-brand-green" />
+                            <span className="mt-2 text-xs text-brand-dark">Adicionar foto</span>
                             <input 
                               type="file" 
                               accept="image/*" 
@@ -479,7 +497,11 @@ const QuotePage = () => {
                     </FormItem>
 
                     <div className="mt-6">
-                      <Button type="submit" className="w-full" disabled={isSubmitting}>
+                      <Button 
+                        type="submit" 
+                        className="w-full bg-brand-green hover:bg-brand-green/90 text-white" 
+                        disabled={isSubmitting}
+                      >
                         {isSubmitting ? "Enviando..." : "Solicitar Orçamento"}
                       </Button>
                     </div>
@@ -493,25 +515,25 @@ const QuotePage = () => {
 
       {/* Modal de ajuda para faixa de preço */}
       <Dialog open={isPriceModalOpen} onOpenChange={setIsPriceModalOpen}>
-        <DialogContent className="sm:max-w-[500px]">
+        <DialogContent className="sm:max-w-[500px] bg-brand-cream border-brand-green">
           <DialogHeader>
-            <DialogTitle>Sobre a Faixa de Preço</DialogTitle>
+            <DialogTitle className="text-brand-dark">Sobre a Faixa de Preço</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-brand-dark/80">
               A faixa de preço serve como uma referência para nossa equipe entender seu orçamento aproximado.
               Isso nos ajuda a sugerir materiais e opções que se encaixem dentro das suas expectativas.
             </p>
             <div className="space-y-2">
-              <h3 className="font-medium text-sm">Valores de referência:</h3>
-              <ul className="text-sm text-gray-600 space-y-1">
-                <li><span className="font-medium">R$ 100 - R$ 500:</span> Pequenos reparos e reformas simples</li>
+              <h3 className="font-medium text-sm text-brand-dark">Valores de referência:</h3>
+              <ul className="text-sm text-brand-dark/80 space-y-1">
+                <li><span className="font-medium">R$ 0 - R$ 500:</span> Pequenos reparos e reformas simples</li>
                 <li><span className="font-medium">R$ 500 - R$ 1.500:</span> Reformas parciais de sofás e cadeiras</li>
                 <li><span className="font-medium">R$ 1.500 - R$ 3.000:</span> Reformas completas de sofás médios</li>
                 <li><span className="font-medium">R$ 3.000 - R$ 5.000+:</span> Reformas completas de sofás grandes ou conjuntos</li>
               </ul>
             </div>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-brand-dark/80">
               Lembre-se que esses valores são apenas referências e o orçamento final dependerá das características específicas do seu móvel, 
               dos materiais escolhidos e da complexidade do trabalho.
             </p>

@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,7 +62,17 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+                // Nova paleta de cores personalizada
+                brand: {
+                    green: {
+                        DEFAULT: '#87b091',
+                        light: '#c4d4ab',
+                        lighter: '#e0e0b6',
+                    },
+                    dark: '#171430',
+                    cream: '#eff0d5',
+                }
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
