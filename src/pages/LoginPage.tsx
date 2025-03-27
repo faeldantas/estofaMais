@@ -40,6 +40,10 @@ type LoginFormValues = z.infer<typeof loginSchema>;
  * 2. Integra-se ao contexto de autenticação para validar credenciais
  * 3. Redireciona o usuário após login bem-sucedido
  * 4. Inclui link para cadastro de novos usuários
+ * 
+ * Substituição de dados mocados:
+ * - A autenticação deve ser feita via API:
+ *   POST /api/auth/login - Para autenticar o usuário
  */
 const LoginPage = () => {
   const { login } = useAuth();
@@ -63,6 +67,8 @@ const LoginPage = () => {
     setIsLoading(true);
     
     try {
+      // TODO: Substituir pelo login real via API
+      // POST /api/auth/login com os dados do formulário
       const success = await login(values.email, values.password);
       
       if (success) {
@@ -77,7 +83,7 @@ const LoginPage = () => {
   return (
     <Layout>
       <div className="container mx-auto px-4 py-16">
-        <div className="max-w-md mx-auto bg-white p-8 rounded-lg shadow-md">
+        <div className="max-w-md mx-auto bg-white p-8 rounded-lg shadow-md border border-brand-green-light/30">
           {/* Cabeçalho do formulário */}
           <div className="text-center mb-8">
             <h1 className="text-2xl font-bold">Entrar</h1>
@@ -97,7 +103,11 @@ const LoginPage = () => {
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input placeholder="seu@email.com" {...field} />
+                      <Input 
+                        placeholder="seu@email.com" 
+                        {...field} 
+                        className="border-brand-green-light focus-visible:ring-brand-green"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -112,7 +122,12 @@ const LoginPage = () => {
                   <FormItem>
                     <FormLabel>Senha</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="******" {...field} />
+                      <Input 
+                        type="password" 
+                        placeholder="******" 
+                        {...field} 
+                        className="border-brand-green-light focus-visible:ring-brand-green"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -120,7 +135,11 @@ const LoginPage = () => {
               />
 
               {/* Botão de envio */}
-              <Button type="submit" className="w-full" disabled={isLoading}>
+              <Button 
+                type="submit" 
+                className="w-full bg-brand-green hover:bg-brand-green/90 text-white" 
+                disabled={isLoading}
+              >
                 {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -137,7 +156,7 @@ const LoginPage = () => {
           <div className="text-center mt-6">
             <p className="text-sm text-gray-600">
               Não tem uma conta?{" "}
-              <Link to="/registrar" className="text-primary hover:underline">
+              <Link to="/registrar" className="text-brand-green hover:underline">
                 Cadastre-se
               </Link>
             </p>

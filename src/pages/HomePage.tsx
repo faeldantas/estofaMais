@@ -9,9 +9,16 @@ import { Card, CardContent } from "@/components/ui/card";
 /**
  * HomePage - Componente principal da página inicial
  * Exibe seções informativas sobre a empresa e seus serviços
+ * 
+ * Substituição de dados mocados:
+ * - As informações de serviços devem ser carregadas de uma API:
+ *   GET /api/services - Para obter a lista de serviços oferecidos
+ * - Os depoimentos devem ser carregados de uma API:
+ *   GET /api/testimonials - Para obter depoimentos de clientes
  */
 const HomePage = () => {
   // Lista de serviços oferecidos com seus ícones e descrições
+  // TODO: Substituir por chamada à API - GET /api/services
   const services = [
     {
       id: 1,
@@ -36,7 +43,7 @@ const HomePage = () => {
   return (
     <Layout>
       {/* Hero Section - Banner principal com chamada para ação */}
-      <section className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-20">
+      <section className="bg-gradient-to-r from-brand-green to-brand-green-light text-white py-20">
         <div className="container mx-auto px-4 md:px-6">
           <div className="max-w-3xl mx-auto text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
@@ -47,11 +54,11 @@ const HomePage = () => {
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               {/* Botão de solicitar orçamento - com fundo branco */}
-              <Button asChild size="lg" className="bg-white text-blue-600 hover:bg-gray-100">
+              <Button asChild size="lg" className="bg-white text-brand-green hover:bg-brand-cream">
                 <Link to="/orcamento">Solicitar Orçamento</Link>
               </Button>
-              {/* Botão de ver trabalhos - com fundo azul para melhor contraste */}
-              <Button asChild size="lg" variant="outline" className="border-white text-white bg-blue-500 hover:bg-white hover:text-blue-600">
+              {/* Botão de ver trabalhos - com fundo verde para melhor contraste */}
+              <Button asChild size="lg" variant="outline" className="border-white text-white bg-brand-green hover:bg-white hover:text-brand-green">
                 <Link to="/galeria">Ver Trabalhos</Link>
               </Button>
             </div>
@@ -60,7 +67,7 @@ const HomePage = () => {
       </section>
 
       {/* Services Overview - Visão geral dos serviços oferecidos */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-16 bg-brand-cream/50">
         <div className="container mx-auto px-4 md:px-6">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4">Nossos Serviços</h2>
@@ -74,12 +81,12 @@ const HomePage = () => {
             {services.map((service) => (
               <div key={service.id} className="bg-white p-6 rounded-lg shadow-md text-center hover:shadow-lg transition-shadow">
                 {/* Ícone do serviço */}
-                <div className="mb-4 inline-flex items-center justify-center w-14 h-14 bg-blue-100 text-blue-600 rounded-full">
+                <div className="mb-4 inline-flex items-center justify-center w-14 h-14 bg-brand-green-light/30 text-brand-green rounded-full">
                   <service.icon className="h-7 w-7" />
                 </div>
                 <h3 className="text-xl font-semibold mb-2">{service.title}</h3>
                 <p className="text-gray-600 mb-4">{service.description}</p>
-                <Link to="/servicos" className="text-blue-600 font-medium hover:underline">
+                <Link to="/servicos" className="text-brand-green font-medium hover:underline">
                   Saiba mais
                 </Link>
               </div>
@@ -97,7 +104,7 @@ const HomePage = () => {
               {/* Lista de diferenciais numerados */}
               <div className="space-y-4">
                 <div className="flex items-start">
-                  <div className="flex-shrink-0 w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mr-4">
+                  <div className="flex-shrink-0 w-10 h-10 bg-brand-green-light/30 text-brand-green rounded-full flex items-center justify-center mr-4">
                     <span className="font-bold">1</span>
                   </div>
                   <div>
@@ -106,7 +113,7 @@ const HomePage = () => {
                   </div>
                 </div>
                 <div className="flex items-start">
-                  <div className="flex-shrink-0 w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mr-4">
+                  <div className="flex-shrink-0 w-10 h-10 bg-brand-green-light/30 text-brand-green rounded-full flex items-center justify-center mr-4">
                     <span className="font-bold">2</span>
                   </div>
                   <div>
@@ -115,7 +122,7 @@ const HomePage = () => {
                   </div>
                 </div>
                 <div className="flex items-start">
-                  <div className="flex-shrink-0 w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mr-4">
+                  <div className="flex-shrink-0 w-10 h-10 bg-brand-green-light/30 text-brand-green rounded-full flex items-center justify-center mr-4">
                     <span className="font-bold">3</span>
                   </div>
                   <div>
@@ -124,7 +131,7 @@ const HomePage = () => {
                   </div>
                 </div>
               </div>
-              <Button asChild className="mt-8">
+              <Button asChild className="mt-8 bg-brand-green hover:bg-brand-green/90 text-white">
                 <Link to="/sobre">Conheça Nossa História</Link>
               </Button>
             </div>
@@ -141,7 +148,7 @@ const HomePage = () => {
       </section>
 
       {/* Testimonials - Seção de depoimentos */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-16 bg-brand-cream/50">
         <div className="container mx-auto px-4 md:px-6">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4">O que nossos clientes dizem</h2>
@@ -153,6 +160,7 @@ const HomePage = () => {
           {/* Carrossel de depoimentos */}
           <Carousel className="w-full max-w-4xl mx-auto">
             <CarouselContent>
+              {/* TODO: Substituir por chamada à API - GET /api/testimonials */}
               {[1, 2, 3].map((index) => (
                 <CarouselItem key={index} className="md:basis-1/1 lg:basis-1/1">
                   <Card>
@@ -177,13 +185,13 @@ const HomePage = () => {
       </section>
 
       {/* CTA Section - Chamada para ação final */}
-      <section className="py-16 bg-blue-600 text-white">
+      <section className="py-16 bg-brand-green text-white">
         <div className="container mx-auto px-4 md:px-6 text-center">
           <h2 className="text-3xl font-bold mb-6">Pronto para transformar seus estofados?</h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto">
             Entre em contato conosco hoje para um orçamento gratuito e sem compromisso.
           </p>
-          <Button asChild size="lg" className="bg-white text-blue-600 hover:bg-gray-100">
+          <Button asChild size="lg" className="bg-white text-brand-green hover:bg-brand-cream">
             <Link to="/orcamento">Solicitar Orçamento</Link>
           </Button>
         </div>

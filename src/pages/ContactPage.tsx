@@ -11,6 +11,9 @@ import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { Phone, Mail, MapPin, Clock } from "lucide-react";
 
+/**
+ * Esquema de validação do formulário de contato
+ */
 const contactFormSchema = z.object({
   name: z.string().min(3, { message: "Nome deve ter pelo menos 3 caracteres" }),
   email: z.string().email({ message: "E-mail inválido" }),
@@ -18,8 +21,21 @@ const contactFormSchema = z.object({
   message: z.string().min(10, { message: "Mensagem deve ter pelo menos 10 caracteres" }),
 });
 
+/**
+ * Tipo derivado do esquema para uso no formulário
+ */
 type ContactFormValues = z.infer<typeof contactFormSchema>;
 
+/**
+ * ContactPage - Página de contato
+ * Exibe informações de contato e formulário para envio de mensagens
+ * 
+ * Substituição de dados mocados:
+ * - As informações de contato devem ser carregadas de uma API:
+ *   GET /api/contact-info - Para obter os dados de contato da empresa
+ * - O envio do formulário deve ser feito para uma API:
+ *   POST /api/contact - Para enviar a mensagem de contato
+ */
 const ContactPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -33,9 +49,14 @@ const ContactPage = () => {
     },
   });
 
+  /**
+   * Função que processa o envio do formulário
+   * @param data Valores do formulário validados
+   */
   const onSubmit = (data: ContactFormValues) => {
     setIsSubmitting(true);
     
+    // TODO: Substituir por chamada à API - POST /api/contact
     // Simulate API call
     setTimeout(() => {
       console.log("Contact form submitted:", data);
@@ -50,6 +71,7 @@ const ContactPage = () => {
     }, 1500);
   };
 
+  // TODO: Substituir por chamada à API - GET /api/contact-info
   const contactInfo = [
     {
       icon: Phone,
@@ -79,7 +101,7 @@ const ContactPage = () => {
 
   return (
     <Layout>
-      <section className="py-12 bg-gray-50">
+      <section className="py-12 bg-brand-cream/50">
         <div className="container mx-auto px-4 md:px-6">
           <div className="text-center mb-12">
             <h1 className="text-4xl font-bold mb-4">Entre em Contato</h1>
@@ -93,8 +115,8 @@ const ContactPage = () => {
             <div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                 {contactInfo.map((item, index) => (
-                  <div key={index} className="bg-white p-6 rounded-lg shadow-md">
-                    <div className="inline-flex items-center justify-center w-12 h-12 bg-blue-100 text-blue-600 rounded-full mb-4">
+                  <div key={index} className="bg-white p-6 rounded-lg shadow-md border border-brand-green-light/20">
+                    <div className="inline-flex items-center justify-center w-12 h-12 bg-brand-green-light/30 text-brand-green rounded-full mb-4">
                       <item.icon className="h-6 w-6" />
                     </div>
                     <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
@@ -104,10 +126,11 @@ const ContactPage = () => {
                 ))}
               </div>
 
-              <div className="bg-white p-6 rounded-lg shadow-md">
+              <div className="bg-white p-6 rounded-lg shadow-md border border-brand-green-light/20">
                 <h3 className="text-xl font-semibold mb-4">Nossa Localização</h3>
                 <div className="aspect-video bg-gray-200 rounded-md">
                   {/* Map would go here - using a placeholder */}
+                  {/* TODO: Integrar com API de mapas como Google Maps ou Mapbox */}
                   <div className="h-full w-full flex items-center justify-center bg-gray-200 text-gray-500">
                     Mapa Interativo Aqui
                   </div>
@@ -115,7 +138,7 @@ const ContactPage = () => {
               </div>
             </div>
 
-            <div className="bg-white p-8 rounded-lg shadow-md">
+            <div className="bg-white p-8 rounded-lg shadow-md border border-brand-green-light/20">
               <h2 className="text-2xl font-semibold mb-6">Envie-nos uma mensagem</h2>
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -126,7 +149,11 @@ const ContactPage = () => {
                       <FormItem>
                         <FormLabel>Nome completo</FormLabel>
                         <FormControl>
-                          <Input placeholder="Seu nome" {...field} />
+                          <Input 
+                            placeholder="Seu nome" 
+                            {...field}
+                            className="border-brand-green-light focus-visible:ring-brand-green" 
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -140,7 +167,12 @@ const ContactPage = () => {
                       <FormItem>
                         <FormLabel>E-mail</FormLabel>
                         <FormControl>
-                          <Input type="email" placeholder="seu@email.com" {...field} />
+                          <Input 
+                            type="email" 
+                            placeholder="seu@email.com" 
+                            {...field}
+                            className="border-brand-green-light focus-visible:ring-brand-green" 
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -154,7 +186,11 @@ const ContactPage = () => {
                       <FormItem>
                         <FormLabel>Assunto</FormLabel>
                         <FormControl>
-                          <Input placeholder="Assunto da mensagem" {...field} />
+                          <Input 
+                            placeholder="Assunto da mensagem" 
+                            {...field}
+                            className="border-brand-green-light focus-visible:ring-brand-green" 
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -170,7 +206,7 @@ const ContactPage = () => {
                         <FormControl>
                           <Textarea 
                             placeholder="Digite sua mensagem aqui..." 
-                            className="min-h-[150px]"
+                            className="min-h-[150px] border-brand-green-light focus-visible:ring-brand-green"
                             {...field} 
                           />
                         </FormControl>
@@ -179,7 +215,11 @@ const ContactPage = () => {
                     )}
                   />
 
-                  <Button type="submit" className="w-full" disabled={isSubmitting}>
+                  <Button 
+                    type="submit" 
+                    className="w-full bg-brand-green hover:bg-brand-green/90 text-white" 
+                    disabled={isSubmitting}
+                  >
                     {isSubmitting ? "Enviando..." : "Enviar Mensagem"}
                   </Button>
                 </form>

@@ -8,10 +8,12 @@ import { Gallery, GalleryImage } from "@/components/Gallery";
  * GalleryPage - Componente principal da página de galeria de trabalhos
  * Este componente gerencia a exibição e filtragem de projetos anteriores por categoria
  * 
- * Funcionalidades:
- * - Filtragem de projetos por categoria (Todos, Sofás, Cadeiras, Automóveis)
- * - Integração com o componente Gallery para exibição dos itens
- * - Layout responsivo usando o componente Layout para manter consistência
+ * Substituição de dados mocados:
+ * - Os itens da galeria devem ser carregados de uma API:
+ *   GET /api/gallery - Para obter todos os itens da galeria
+ *   GET /api/gallery?category=sofas - Para filtrar por categoria
+ * - As categorias também podem ser carregadas dinamicamente:
+ *   GET /api/gallery/categories - Para obter a lista de categorias disponíveis
  */
 const GalleryPage = () => {
   // Estado para armazenar a categoria selecionada pelo usuário
@@ -19,7 +21,7 @@ const GalleryPage = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
 
   // Lista de categorias disponíveis para filtragem na interface
-  // Cada categoria tem um id (usado internamente) e um nome (mostrado ao usuário)
+  // TODO: Substituir por chamada à API - GET /api/gallery/categories
   const categories = [
     { id: "all", name: "Todos" },      // Mostra todos os itens independente da categoria
     { id: "sofas", name: "Sofás" },    // Filtra apenas trabalhos relacionados a sofás
@@ -28,7 +30,7 @@ const GalleryPage = () => {
   ];
 
   // Array de itens da galeria com propriedades detalhadas
-  // Cada item representa um projeto realizado pela empresa
+  // TODO: Substituir por chamada à API - GET /api/gallery ou GET /api/gallery?category={category}
   const galleryItems: GalleryImage[] = [
     {
       id: 1,                           // Identificador único do item
@@ -144,9 +146,13 @@ const GalleryPage = () => {
 
           {/* Componente de abas para filtrar projetos por categoria */}
           <Tabs defaultValue="all" onValueChange={setSelectedCategory} className="w-full max-w-3xl mx-auto mb-10">
-            <TabsList className="grid grid-cols-4 w-full">
+            <TabsList className="grid grid-cols-4 w-full bg-brand-cream border border-brand-green-light/30">
               {categories.map(category => (
-                <TabsTrigger key={category.id} value={category.id}>
+                <TabsTrigger 
+                  key={category.id} 
+                  value={category.id}
+                  className="data-[state=active]:bg-brand-green data-[state=active]:text-white"
+                >
                   {category.name}
                 </TabsTrigger>
               ))}

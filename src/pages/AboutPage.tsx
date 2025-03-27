@@ -3,7 +3,22 @@ import Layout from "@/components/Layout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Calendar, Award, Users } from "lucide-react";
 
+/**
+ * AboutPage - Página sobre a empresa
+ * Exibe informações sobre a história, missão, valores e equipe da empresa
+ * 
+ * Substituição de dados mocados:
+ * - A timeline de história deve ser carregada de uma API:
+ *   GET /api/about/history - Para obter marcos históricos da empresa
+ * - Informações de missão, visão e valores:
+ *   GET /api/about/mission-vision - Para obter textos institucionais
+ * - Informações da equipe:
+ *   GET /api/about/team - Para obter dados dos membros da equipe
+ * - Valores da empresa:
+ *   GET /api/about/values - Para obter lista de valores da empresa
+ */
 const AboutPage = () => {
+  // TODO: Substituir por chamada à API - GET /api/about/history
   const timeline = [
     {
       year: "2005",
@@ -27,6 +42,7 @@ const AboutPage = () => {
     }
   ];
 
+  // TODO: Substituir por chamada à API - GET /api/about/team
   const team = [
     {
       name: "Carlos Silva",
@@ -48,6 +64,7 @@ const AboutPage = () => {
     }
   ];
 
+  // TODO: Substituir por chamada à API - GET /api/about/values
   const values = [
     {
       icon: Users,
@@ -68,7 +85,7 @@ const AboutPage = () => {
 
   return (
     <Layout>
-      <section className="py-12 bg-gray-50">
+      <section className="py-12 bg-brand-cream/50">
         <div className="container mx-auto px-4 md:px-6">
           <div className="text-center mb-12">
             <h1 className="text-4xl font-bold mb-4">Sobre a EstofaMais</h1>
@@ -78,13 +95,13 @@ const AboutPage = () => {
           </div>
 
           <div className="max-w-5xl mx-auto">
-            <div className="bg-white p-8 rounded-lg shadow-md mb-12">
+            <div className="bg-white p-8 rounded-lg shadow-md mb-12 border border-brand-green-light/20">
               <h2 className="text-2xl font-bold mb-6">Nossa História</h2>
               <div className="space-y-8">
                 {timeline.map((item, index) => (
                   <div key={index} className="flex">
                     <div className="flex-shrink-0 w-24 mr-8 text-center">
-                      <div className="bg-blue-100 text-blue-600 py-2 px-4 rounded-full font-bold">
+                      <div className="bg-brand-green-light/30 text-brand-green py-2 px-4 rounded-full font-bold">
                         {item.year}
                       </div>
                     </div>
@@ -97,24 +114,24 @@ const AboutPage = () => {
               </div>
             </div>
 
-            <div className="bg-white p-8 rounded-lg shadow-md mb-12">
+            <div className="bg-white p-8 rounded-lg shadow-md mb-12 border border-brand-green-light/20">
               <h2 className="text-2xl font-bold mb-6">Missão, Visão e Valores</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="p-6 bg-gray-50 rounded-lg">
+                <div className="p-6 bg-brand-cream rounded-lg border border-brand-green-light/20">
                   <h3 className="text-xl font-semibold mb-3">Missão</h3>
                   <p className="text-gray-600">
                     Oferecer soluções de alta qualidade em reforma de estofados, proporcionando conforto, 
                     beleza e satisfação aos nossos clientes.
                   </p>
                 </div>
-                <div className="p-6 bg-gray-50 rounded-lg">
+                <div className="p-6 bg-brand-cream rounded-lg border border-brand-green-light/20">
                   <h3 className="text-xl font-semibold mb-3">Visão</h3>
                   <p className="text-gray-600">
                     Ser referência nacional em reforma de estofados, reconhecidos pela excelência, 
                     inovação e compromisso com a satisfação dos clientes.
                   </p>
                 </div>
-                <div className="p-6 bg-gray-50 rounded-lg">
+                <div className="p-6 bg-brand-cream rounded-lg border border-brand-green-light/20">
                   <h3 className="text-xl font-semibold mb-3">Valores</h3>
                   <ul className="list-disc list-inside text-gray-600 space-y-1">
                     <li>Qualidade em tudo que fazemos</li>
@@ -131,9 +148,9 @@ const AboutPage = () => {
               <h2 className="text-2xl font-bold mb-6 text-center">Nossos Valores</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {values.map((value, index) => (
-                  <Card key={index}>
+                  <Card key={index} className="border border-brand-green-light/20">
                     <CardContent className="p-6 text-center">
-                      <div className="inline-flex items-center justify-center w-12 h-12 bg-blue-100 text-blue-600 rounded-full mb-4">
+                      <div className="inline-flex items-center justify-center w-12 h-12 bg-brand-green-light/30 text-brand-green rounded-full mb-4">
                         <value.icon className="h-6 w-6" />
                       </div>
                       <h3 className="text-xl font-semibold mb-2">{value.title}</h3>
@@ -148,7 +165,7 @@ const AboutPage = () => {
               <h2 className="text-2xl font-bold mb-6 text-center">Nossa Equipe</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {team.map((member, index) => (
-                  <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden">
+                  <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden border border-brand-green-light/20">
                     <div className="h-48 overflow-hidden">
                       <img 
                         src={member.image} 
@@ -158,7 +175,7 @@ const AboutPage = () => {
                     </div>
                     <div className="p-6">
                       <h3 className="text-xl font-semibold mb-1">{member.name}</h3>
-                      <p className="text-blue-600 mb-3">{member.role}</p>
+                      <p className="text-brand-green mb-3">{member.role}</p>
                       <p className="text-gray-600">{member.bio}</p>
                     </div>
                   </div>

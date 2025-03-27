@@ -3,7 +3,18 @@ import Layout from "@/components/Layout";
 import ServiceItem from "@/components/ServiceItem";
 import { Sofa, Armchair, Car } from "lucide-react";
 
+/**
+ * ServicesPage - Página de serviços oferecidos
+ * Exibe todos os serviços disponíveis com suas descrições detalhadas
+ * 
+ * Substituição de dados mocados:
+ * - A lista de serviços deve ser carregada de uma API:
+ *   GET /api/services - Para obter a lista completa de serviços com detalhes
+ * - O processo de trabalho deve ser carregado de uma API:
+ *   GET /api/work-process - Para obter as etapas do processo de trabalho
+ */
 const ServicesPage = () => {
+  // TODO: Substituir por chamada à API - GET /api/services
   const services = [
     {
       id: 1,
@@ -48,7 +59,7 @@ const ServicesPage = () => {
 
   return (
     <Layout>
-      <section className="py-12 bg-gray-50">
+      <section className="py-12 bg-brand-cream/50">
         <div className="container mx-auto px-4 md:px-6">
           <div className="text-center mb-12">
             <h1 className="text-4xl font-bold mb-4">Nossos Serviços</h1>
@@ -75,30 +86,31 @@ const ServicesPage = () => {
             </p>
           </div>
 
+          {/* TODO: Substituir por chamada à API - GET /api/work-process */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="text-center">
-              <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 bg-brand-green-light/30 text-brand-green rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-xl font-bold">1</span>
               </div>
               <h3 className="text-xl font-semibold mb-2">Orçamento</h3>
               <p className="text-gray-600">Avaliamos seu estofado e apresentamos as opções de materiais e serviços.</p>
             </div>
             <div className="text-center">
-              <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 bg-brand-green-light/30 text-brand-green rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-xl font-bold">2</span>
               </div>
               <h3 className="text-xl font-semibold mb-2">Retirada</h3>
               <p className="text-gray-600">Buscamos seu estofado em sua residência ou local indicado.</p>
             </div>
             <div className="text-center">
-              <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 bg-brand-green-light/30 text-brand-green rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-xl font-bold">3</span>
               </div>
               <h3 className="text-xl font-semibold mb-2">Reforma</h3>
               <p className="text-gray-600">Realizamos a reforma completa conforme o combinado no orçamento.</p>
             </div>
             <div className="text-center">
-              <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 bg-brand-green-light/30 text-brand-green rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-xl font-bold">4</span>
               </div>
               <h3 className="text-xl font-semibold mb-2">Entrega</h3>

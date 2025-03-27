@@ -22,6 +22,10 @@ import { cn } from "@/lib/utils"
  * 
  * Exemplo de uso:
  * <Slider defaultValue={[50]} min={0} max={100} step={1} />
+ * 
+ * Utilização em API real:
+ * Este componente de UI não precisa de substituição por API, pois é um componente puramente de interface.
+ * Ele pode ser usado em conjunto com valores obtidos de APIs.
  */
 const Slider = React.forwardRef<
   React.ElementRef<typeof SliderPrimitive.Root>,
