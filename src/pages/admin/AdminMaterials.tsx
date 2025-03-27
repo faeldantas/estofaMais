@@ -31,9 +31,20 @@ interface Material {
  * - Editar materiais existentes
  * - Excluir materiais
  * - Visualizar todos os materiais cadastrados em um grid
+ * 
+ * Substituição por API:
+ * Em um ambiente de produção, todas as operações CRUD devem ser substituídas 
+ * por chamadas à API:
+ * 
+ * - GET /api/materials - Obter todos os materiais
+ * - GET /api/materials/:id - Obter um material específico
+ * - POST /api/materials - Adicionar um novo material
+ * - PUT /api/materials/:id - Atualizar um material existente
+ * - DELETE /api/materials/:id - Excluir um material
  */
 const AdminMaterials = () => {
   // Estado para armazenar a lista de materiais
+  // Em produção, deve ser substituído por uma chamada à API
   const [materials, setMaterials] = useState<Material[]>([
     {
       id: 1,
@@ -113,6 +124,9 @@ const AdminMaterials = () => {
   /**
    * Abre o modal de visualização detalhada de um material
    * @param material - Material a ser visualizado em detalhes
+   * 
+   * Em produção: pode ser necessário buscar dados adicionais da API
+   * GET /api/materials/:id
    */
   const handleViewMaterial = (material: Material) => {
     setViewingMaterial(material);
@@ -122,6 +136,9 @@ const AdminMaterials = () => {
   /**
    * Manipula a abertura do modal de edição com os dados do material selecionado
    * @param material - Material a ser editado
+   * 
+   * Em produção: pode ser necessário buscar dados adicionais da API
+   * GET /api/materials/:id
    */
   const handleEditMaterial = (material: Material) => {
     setFormData(material);
@@ -157,6 +174,9 @@ const AdminMaterials = () => {
 
   /**
    * Confirma a exclusão do material e atualiza o estado
+   * 
+   * Em produção: deve enviar uma requisição DELETE para a API
+   * DELETE /api/materials/:id
    */
   const confirmDelete = () => {
     if (materialToDelete !== null) {
@@ -184,6 +204,10 @@ const AdminMaterials = () => {
 
   /**
    * Salva o material (novo ou editado) na lista
+   * 
+   * Em produção:
+   * - Para edição: PUT /api/materials/:id
+   * - Para criação: POST /api/materials
    */
   const handleSaveMaterial = () => {
     // Validações básicas de formulário
@@ -224,7 +248,7 @@ const AdminMaterials = () => {
           <h1 className="text-3xl font-bold">Gerenciar Materiais</h1>
           <p className="text-gray-500 mt-1">Adicione, edite ou remova materiais disponíveis para estofados</p>
         </div>
-        <Button onClick={handleAddMaterial} className="flex items-center gap-2">
+        <Button onClick={handleAddMaterial} className="flex items-center gap-2 bg-[#87b091] hover:bg-[#87b091]/80">
           <Plus size={16} />
           Adicionar Material
         </Button>
@@ -234,7 +258,7 @@ const AdminMaterials = () => {
         {materials.map((material) => (
           <Card 
             key={material.id} 
-            className="overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
+            className="overflow-hidden cursor-pointer hover:shadow-md transition-shadow border-[#c4d4ab]"
             onClick={() => handleViewMaterial(material)}
           >
             <div className="aspect-square bg-gray-100 relative overflow-hidden">
@@ -248,18 +272,18 @@ const AdminMaterials = () => {
                 <Button 
                   size="icon" 
                   variant="outline" 
-                  className="h-7 w-7 bg-white rounded-full opacity-90 hover:opacity-100"
+                  className="h-7 w-7 bg-white rounded-full opacity-90 hover:opacity-100 border-[#87b091]"
                   onClick={(e) => {
                     e.stopPropagation();
                     handleEditMaterial(material);
                   }}
                 >
-                  <Pencil size={14} />
+                  <Pencil size={14} className="text-[#171430]" />
                 </Button>
                 <Button 
                   size="icon" 
                   variant="outline" 
-                  className="h-7 w-7 bg-white rounded-full opacity-90 hover:opacity-100 text-red-500 hover:text-red-600"
+                  className="h-7 w-7 bg-white rounded-full opacity-90 hover:opacity-100 text-red-500 hover:text-red-600 border-[#87b091]"
                   onClick={(e) => {
                     e.stopPropagation();
                     handleDeleteMaterial(material.id);
@@ -272,7 +296,7 @@ const AdminMaterials = () => {
             <CardContent className="p-2">
               <h3 className="font-medium text-sm truncate">{material.title}</h3>
               <div className="flex justify-between items-center mt-1">
-                <span className="text-xs text-gray-500">{material.type}</span>
+                <span className="text-xs text-[#87b091]">{material.type}</span>
                 <span className="text-xs font-medium">R$ {material.price.toFixed(2)}</span>
               </div>
             </CardContent>
@@ -282,9 +306,9 @@ const AdminMaterials = () => {
 
       {/* Dialog para visualização detalhada do material */}
       <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
-        <DialogContent className="sm:max-w-[550px]">
+        <DialogContent className="sm:max-w-[550px] bg-[#eff0d5] border-[#87b091]">
           <DialogHeader>
-            <DialogTitle>{viewingMaterial?.title}</DialogTitle>
+            <DialogTitle className="text-[#171430]">{viewingMaterial?.title}</DialogTitle>
           </DialogHeader>
           {viewingMaterial && (
             <div className="grid md:grid-cols-2 gap-4">
@@ -297,7 +321,7 @@ const AdminMaterials = () => {
                 />
               </div>
               <div className="flex flex-col">
-                <h3 className="text-xl font-semibold">{viewingMaterial.title}</h3>
+                <h3 className="text-xl font-semibold text-[#171430]">{viewingMaterial.title}</h3>
                 <div className="mt-2 space-y-2">
                   <div>
                     <span className="text-sm font-medium">Tipo:</span>
@@ -319,7 +343,7 @@ const AdminMaterials = () => {
                 <div className="mt-auto flex gap-2 pt-4">
                   <Button 
                     variant="outline" 
-                    className="flex-1"
+                    className="flex-1 border-[#c4d4ab] text-[#171430] hover:bg-[#eff0d5] hover:text-[#171430]"
                     onClick={() => handleEditMaterial(viewingMaterial)}
                   >
                     <Pencil size={16} className="mr-2" />
@@ -345,9 +369,9 @@ const AdminMaterials = () => {
 
       {/* Dialog para edição/adição de material */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="sm:max-w-[550px]">
+        <DialogContent className="sm:max-w-[550px] bg-[#eff0d5] border-[#87b091]">
           <DialogHeader>
-            <DialogTitle>{isEditing ? "Editar Material" : "Adicionar Novo Material"}</DialogTitle>
+            <DialogTitle className="text-[#171430]">{isEditing ? "Editar Material" : "Adicionar Novo Material"}</DialogTitle>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-2 gap-4">
@@ -357,6 +381,7 @@ const AdminMaterials = () => {
                   id="title" 
                   value={formData.title} 
                   onChange={(e) => handleInputChange("title", e.target.value)}
+                  className="border-[#c4d4ab] focus-visible:ring-[#87b091]"
                 />
               </div>
               <div className="space-y-2">
@@ -366,6 +391,7 @@ const AdminMaterials = () => {
                   value={formData.type} 
                   onChange={(e) => handleInputChange("type", e.target.value)}
                   placeholder="Ex: Veludo, Couro, Linho"
+                  className="border-[#c4d4ab] focus-visible:ring-[#87b091]"
                 />
               </div>
             </div>
@@ -376,6 +402,7 @@ const AdminMaterials = () => {
                   id="color" 
                   value={formData.color} 
                   onChange={(e) => handleInputChange("color", e.target.value)}
+                  className="border-[#c4d4ab] focus-visible:ring-[#87b091]"
                 />
               </div>
               <div className="space-y-2">
@@ -386,6 +413,7 @@ const AdminMaterials = () => {
                   value={formData.price}
                   onChange={(e) => handleInputChange("price", parseFloat(e.target.value))}
                   step="0.01"
+                  className="border-[#c4d4ab] focus-visible:ring-[#87b091]"
                 />
               </div>
             </div>
@@ -396,6 +424,7 @@ const AdminMaterials = () => {
                 value={formData.description} 
                 onChange={(e) => handleInputChange("description", e.target.value)}
                 rows={3}
+                className="border-[#c4d4ab] focus-visible:ring-[#87b091]"
               />
             </div>
             <div className="space-y-2">
@@ -405,10 +434,10 @@ const AdminMaterials = () => {
                   id="imageUrl" 
                   value={formData.imageUrl} 
                   onChange={(e) => handleInputChange("imageUrl", e.target.value)}
-                  className="flex-1"
+                  className="flex-1 border-[#c4d4ab] focus-visible:ring-[#87b091]"
                 />
                 {formData.imageUrl && (
-                  <div className="h-10 w-10 overflow-hidden rounded border">
+                  <div className="h-10 w-10 overflow-hidden rounded border border-[#c4d4ab]">
                     <img 
                       src={formData.imageUrl} 
                       alt="Preview" 
@@ -420,7 +449,7 @@ const AdminMaterials = () => {
               </div>
             </div>
             {formData.imageUrl && (
-              <div className="bg-gray-50 rounded p-2 mt-2">
+              <div className="bg-[#e0e0b6]/30 rounded p-2 mt-2">
                 <p className="text-xs text-gray-500 mb-2">Preview:</p>
                 <div className="h-40 bg-gray-100 rounded overflow-hidden">
                   <img
@@ -437,10 +466,14 @@ const AdminMaterials = () => {
             <Button 
               variant="outline" 
               onClick={() => setIsEditDialogOpen(false)}
+              className="border-[#c4d4ab] text-[#171430] hover:bg-[#eff0d5] hover:text-[#171430]"
             >
               Cancelar
             </Button>
-            <Button onClick={handleSaveMaterial}>
+            <Button 
+              onClick={handleSaveMaterial}
+              className="bg-[#87b091] hover:bg-[#87b091]/80"
+            >
               {isEditing ? "Salvar alterações" : "Adicionar material"}
             </Button>
           </DialogFooter>
@@ -449,15 +482,16 @@ const AdminMaterials = () => {
 
       {/* Dialog para confirmação de exclusão */}
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-[425px] bg-[#eff0d5] border-[#87b091]">
           <DialogHeader>
-            <DialogTitle>Confirmar exclusão</DialogTitle>
+            <DialogTitle className="text-[#171430]">Confirmar exclusão</DialogTitle>
           </DialogHeader>
           <p className="py-4">Tem certeza que deseja excluir este material? Esta ação não pode ser desfeita.</p>
           <DialogFooter>
             <Button 
               variant="outline" 
               onClick={() => setIsDeleteDialogOpen(false)}
+              className="border-[#c4d4ab] text-[#171430] hover:bg-[#eff0d5] hover:text-[#171430]"
             >
               Cancelar
             </Button>
@@ -476,6 +510,7 @@ const AdminMaterials = () => {
         <Button 
           variant="outline" 
           onClick={() => navigate("/admin")}
+          className="border-[#c4d4ab] text-[#171430] hover:bg-[#eff0d5] hover:text-[#171430]"
         >
           Voltar ao Dashboard
         </Button>

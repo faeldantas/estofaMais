@@ -30,6 +30,19 @@ import ProtectedRoute from "./components/ProtectedRoute";
 /**
  * Criação do cliente de consulta para o React Query
  * Usado para gerenciar o estado de dados e requisições
+ * 
+ * Em um ambiente de produção, você pode configurar opções adicionais, como:
+ * - defaultOptions para configurar tempos de cache
+ * - queryCache para manipular erros globalmente
+ * 
+ * const queryClient = new QueryClient({
+ *   defaultOptions: {
+ *     queries: {
+ *       staleTime: 5 * 60 * 1000, // 5 minutos
+ *       retry: 1,
+ *     },
+ *   },
+ * });
  */
 const queryClient = new QueryClient();
 
@@ -45,6 +58,9 @@ const queryClient = new QueryClient();
  * 
  * O roteamento mapeia URLs para os diferentes componentes de página,
  * permitindo navegação sem recarregar a página inteira.
+ * 
+ * Em um ambiente de produção, as rotas podem ser protegidas com middleware 
+ * de autenticação no backend, além da proteção no frontend.
  */
 const App = () => (
   <QueryClientProvider client={queryClient}>

@@ -33,9 +33,20 @@ interface BlogPost {
  * - Editar posts existentes
  * - Excluir posts
  * - Visualizar todos os posts cadastrados
+ * 
+ * Substitução por API:
+ * Em um ambiente de produção, todas as operações CRUD devem ser substituídas
+ * por chamadas à API:
+ * 
+ * - GET /api/blog/posts - Obter todos os posts
+ * - GET /api/blog/posts/:id - Obter um post específico
+ * - POST /api/blog/posts - Adicionar um novo post
+ * - PUT /api/blog/posts/:id - Atualizar um post existente
+ * - DELETE /api/blog/posts/:id - Excluir um post
  */
 const AdminBlog = () => {
   // Estado para armazenar a lista de posts
+  // Em produção, deve ser substituído por uma chamada à API
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([
     {
       id: 1,
@@ -119,6 +130,9 @@ const AdminBlog = () => {
   /**
    * Abre o modal de visualização detalhada de um post
    * @param post - Post a ser visualizado em detalhes
+   * 
+   * Em produção: deve primeiro buscar os detalhes completos do post da API
+   * GET /api/blog/posts/:id
    */
   const handleViewPost = (post: BlogPost) => {
     setViewingPost(post);
@@ -128,6 +142,9 @@ const AdminBlog = () => {
   /**
    * Manipula a abertura do modal de edição com os dados do post selecionado
    * @param post - Post a ser editado
+   * 
+   * Em produção: pode ser necessário buscar dados adicionais da API
+   * GET /api/blog/posts/:id
    */
   const handleEditPost = (post: BlogPost) => {
     setFormData(post);
@@ -137,6 +154,8 @@ const AdminBlog = () => {
 
   /**
    * Abre o modal para adicionar um novo post com o formulário em branco
+   * 
+   * Inicializa o formulário com valores padrão, incluindo a data atual formatada
    */
   const handleAddPost = () => {
     setFormData({
@@ -164,6 +183,9 @@ const AdminBlog = () => {
 
   /**
    * Confirma a exclusão do post e atualiza o estado
+   * 
+   * Em produção: deve enviar uma requisição DELETE para a API
+   * DELETE /api/blog/posts/:id
    */
   const confirmDelete = () => {
     if (postToDelete !== null) {
@@ -191,6 +213,10 @@ const AdminBlog = () => {
 
   /**
    * Salva o post (novo ou editado) na lista
+   * 
+   * Em produção:
+   * - Para edição: PUT /api/blog/posts/:id
+   * - Para criação: POST /api/blog/posts
    */
   const handleSavePost = () => {
     // Validações básicas de formulário
@@ -225,6 +251,8 @@ const AdminBlog = () => {
   };
 
   // Categorias disponíveis para os posts
+  // Em produção: devem ser buscadas da API
+  // GET /api/blog/categories
   const categories = [
     { id: "dicas", name: "Dicas" },
     { id: "manutencao", name: "Manutenção" },
@@ -234,6 +262,8 @@ const AdminBlog = () => {
   ];
 
   // Autores disponíveis
+  // Em produção: devem ser buscados da API
+  // GET /api/users?role=author
   const authors = [
     "Ana Ferreira",
     "Carlos Silva",
@@ -249,7 +279,7 @@ const AdminBlog = () => {
           <h1 className="text-3xl font-bold">Gerenciar Blog</h1>
           <p className="text-gray-500 mt-1">Adicione, edite ou remova posts do blog</p>
         </div>
-        <Button onClick={handleAddPost} className="flex items-center gap-2">
+        <Button onClick={handleAddPost} className="flex items-center gap-2 bg-[#87b091] hover:bg-[#87b091]/80">
           <Plus size={16} />
           Novo Post
         </Button>
@@ -257,7 +287,7 @@ const AdminBlog = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {blogPosts.map((post) => (
-          <Card key={post.id} className="overflow-hidden hover:shadow-md transition-shadow">
+          <Card key={post.id} className="overflow-hidden hover:shadow-md transition-shadow border-[#c4d4ab]">
             <div 
               className="h-48 overflow-hidden cursor-pointer"
               onClick={() => handleViewPost(post)}
@@ -270,16 +300,16 @@ const AdminBlog = () => {
               />
             </div>
             <CardContent className="p-4">
-              <div className="text-sm text-blue-600 mb-1">{post.category}</div>
+              <div className="text-sm text-[#87b091] mb-1">{post.category}</div>
               <h3 
-                className="text-lg font-semibold line-clamp-2 cursor-pointer hover:text-blue-700 transition-colors"
+                className="text-lg font-semibold line-clamp-2 cursor-pointer hover:text-[#87b091] transition-colors"
                 onClick={() => handleViewPost(post)}
               >
                 {post.title}
               </h3>
               <p className="text-sm text-gray-600 mt-2 line-clamp-3">{post.excerpt}</p>
             </CardContent>
-            <CardFooter className="px-4 py-3 flex justify-between items-center text-sm text-gray-500 border-t">
+            <CardFooter className="px-4 py-3 flex justify-between items-center text-sm text-gray-500 border-t border-[#e0e0b6]">
               <div className="flex items-center gap-1">
                 <Calendar size={14} />
                 <span>{post.date}</span>
@@ -288,7 +318,7 @@ const AdminBlog = () => {
                 <Button 
                   size="sm" 
                   variant="ghost"
-                  className="h-8 px-2"
+                  className="h-8 px-2 hover:bg-[#eff0d5] hover:text-[#171430]"
                   onClick={() => handleViewPost(post)}
                 >
                   <Eye size={16} />
@@ -296,7 +326,7 @@ const AdminBlog = () => {
                 <Button 
                   size="sm" 
                   variant="ghost"
-                  className="h-8 px-2"
+                  className="h-8 px-2 hover:bg-[#eff0d5] hover:text-[#171430]"
                   onClick={() => handleEditPost(post)}
                 >
                   <Pencil size={16} />
@@ -317,9 +347,9 @@ const AdminBlog = () => {
 
       {/* Dialog para visualização detalhada do post */}
       <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
-        <DialogContent className="sm:max-w-[700px] max-h-[80vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-[700px] max-h-[80vh] overflow-y-auto bg-[#eff0d5] border-[#87b091]">
           <DialogHeader>
-            <DialogTitle className="text-2xl">{viewingPost?.title}</DialogTitle>
+            <DialogTitle className="text-2xl text-[#171430]">{viewingPost?.title}</DialogTitle>
           </DialogHeader>
           {viewingPost && (
             <div className="space-y-4">
@@ -338,7 +368,7 @@ const AdminBlog = () => {
               </div>
               
               <div>
-                <span className="inline-block px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
+                <span className="inline-block px-3 py-1 bg-[#87b091]/20 text-[#87b091] rounded-full text-sm">
                   {viewingPost.category}
                 </span>
               </div>
@@ -355,6 +385,7 @@ const AdminBlog = () => {
                     setIsViewDialogOpen(false);
                     handleEditPost(viewingPost);
                   }}
+                  className="bg-[#87b091] hover:bg-[#87b091]/80"
                 >
                   <Pencil size={16} className="mr-2" />
                   Editar Post
@@ -377,9 +408,9 @@ const AdminBlog = () => {
 
       {/* Dialog para edição/adição de post */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto bg-[#eff0d5] border-[#87b091]">
           <DialogHeader>
-            <DialogTitle>{isEditing ? "Editar Post" : "Novo Post"}</DialogTitle>
+            <DialogTitle className="text-[#171430]">{isEditing ? "Editar Post" : "Novo Post"}</DialogTitle>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="space-y-2">
@@ -388,6 +419,7 @@ const AdminBlog = () => {
                 id="title" 
                 value={formData.title} 
                 onChange={(e) => handleInputChange("title", e.target.value)}
+                className="border-[#c4d4ab] focus-visible:ring-[#87b091]"
               />
             </div>
             
@@ -398,10 +430,10 @@ const AdminBlog = () => {
                   value={formData.category} 
                   onValueChange={(value) => handleInputChange("category", value)}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="border-[#c4d4ab] focus:ring-[#87b091]">
                     <SelectValue placeholder="Selecione a categoria" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-[#eff0d5] border-[#c4d4ab]">
                     {categories.map(category => (
                       <SelectItem key={category.id} value={category.name}>
                         {category.name}
@@ -417,10 +449,10 @@ const AdminBlog = () => {
                   value={formData.author} 
                   onValueChange={(value) => handleInputChange("author", value)}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="border-[#c4d4ab] focus:ring-[#87b091]">
                     <SelectValue placeholder="Selecione o autor" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-[#eff0d5] border-[#c4d4ab]">
                     {authors.map(author => (
                       <SelectItem key={author} value={author}>
                         {author}
@@ -439,6 +471,7 @@ const AdminBlog = () => {
                 onChange={(e) => handleInputChange("excerpt", e.target.value)}
                 placeholder="Breve resumo do artigo (exibido na listagem)"
                 rows={2}
+                className="border-[#c4d4ab] focus-visible:ring-[#87b091]"
               />
             </div>
             
@@ -450,7 +483,7 @@ const AdminBlog = () => {
                 onChange={(e) => handleInputChange("content", e.target.value)}
                 placeholder="Conteúdo completo do artigo (use linhas em branco para separar parágrafos)"
                 rows={10}
-                className="font-mono text-sm"
+                className="font-mono text-sm border-[#c4d4ab] focus-visible:ring-[#87b091]"
               />
             </div>
             
@@ -461,6 +494,7 @@ const AdminBlog = () => {
                 value={formData.image} 
                 onChange={(e) => handleInputChange("image", e.target.value)}
                 placeholder="Link para a imagem de destaque do post"
+                className="border-[#c4d4ab] focus-visible:ring-[#87b091]"
               />
               {formData.image && (
                 <div className="mt-2 aspect-video bg-gray-100 rounded overflow-hidden">
@@ -481,6 +515,7 @@ const AdminBlog = () => {
                 value={formData.date} 
                 onChange={(e) => handleInputChange("date", e.target.value)}
                 placeholder="Ex: 10 de junho de 2023"
+                className="border-[#c4d4ab] focus-visible:ring-[#87b091]"
               />
             </div>
           </div>
@@ -488,10 +523,14 @@ const AdminBlog = () => {
             <Button 
               variant="outline" 
               onClick={() => setIsEditDialogOpen(false)}
+              className="border-[#c4d4ab] text-[#171430] hover:bg-[#eff0d5] hover:text-[#171430]"
             >
               Cancelar
             </Button>
-            <Button onClick={handleSavePost}>
+            <Button 
+              onClick={handleSavePost}
+              className="bg-[#87b091] hover:bg-[#87b091]/80"
+            >
               {isEditing ? "Atualizar Post" : "Publicar Post"}
             </Button>
           </DialogFooter>
@@ -500,15 +539,16 @@ const AdminBlog = () => {
 
       {/* Dialog para confirmação de exclusão */}
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-[425px] bg-[#eff0d5] border-[#87b091]">
           <DialogHeader>
-            <DialogTitle>Confirmar exclusão</DialogTitle>
+            <DialogTitle className="text-[#171430]">Confirmar exclusão</DialogTitle>
           </DialogHeader>
           <p className="py-4">Tem certeza que deseja excluir este post do blog? Esta ação não pode ser desfeita.</p>
           <DialogFooter>
             <Button 
               variant="outline" 
               onClick={() => setIsDeleteDialogOpen(false)}
+              className="border-[#c4d4ab] text-[#171430] hover:bg-[#eff0d5] hover:text-[#171430]"
             >
               Cancelar
             </Button>
@@ -527,6 +567,7 @@ const AdminBlog = () => {
         <Button 
           variant="outline" 
           onClick={() => navigate("/admin")}
+          className="border-[#c4d4ab] text-[#171430] hover:bg-[#eff0d5] hover:text-[#171430]"
         >
           Voltar ao Dashboard
         </Button>

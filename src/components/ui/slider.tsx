@@ -23,9 +23,14 @@ import { cn } from "@/lib/utils"
  * Exemplo de uso:
  * <Slider defaultValue={[50]} min={0} max={100} step={1} />
  * 
- * Utilização em API real:
+ * Substituição por API:
  * Este componente de UI não precisa de substituição por API, pois é um componente puramente de interface.
  * Ele pode ser usado em conjunto com valores obtidos de APIs.
+ * 
+ * Os valores selecionados por este componente podem ser enviados para o backend em operações de formulário
+ * ou filtragem, por exemplo:
+ * - POST /api/quotes com os valores de preço mínimo e máximo selecionados
+ * - GET /api/products?minPrice=X&maxPrice=Y para filtrar produtos por faixa de preço
  */
 const Slider = React.forwardRef<
   React.ElementRef<typeof SliderPrimitive.Root>,
@@ -39,13 +44,13 @@ const Slider = React.forwardRef<
     )}
     {...props}
   >
-    <SliderPrimitive.Track className="relative h-2 w-full grow overflow-hidden rounded-full bg-brand-green-light/30">
-      <SliderPrimitive.Range className="absolute h-full bg-brand-green" />
+    <SliderPrimitive.Track className="relative h-2 w-full grow overflow-hidden rounded-full bg-[#e0e0b6]/50">
+      <SliderPrimitive.Range className="absolute h-full bg-[#87b091]" />
     </SliderPrimitive.Track>
     {props.defaultValue?.map((_, i) => (
       <SliderPrimitive.Thumb
         key={i}
-        className="block h-5 w-5 rounded-full border-2 border-brand-green bg-white ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+        className="block h-5 w-5 rounded-full border-2 border-[#87b091] bg-white ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c4d4ab] focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
       />
     ))}
   </SliderPrimitive.Root>
