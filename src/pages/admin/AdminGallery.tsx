@@ -1,71 +1,43 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Edit, Plus, Trash, ArrowLeft } from "lucide-react";
-
-import { useAuth } from "@/contexts/AuthContext";
-import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
-import { Gallery, GalleryImage } from "@/components/Gallery";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from "@/components/ui/dialog";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
+import { Plus, Pencil, Trash2, Image } from "lucide-react";
+import { GalleryImage } from "@/components/Gallery";
 
 /**
- * Interface para o formulário de edição/adição de item na galeria
+ * Interface que define a estrutura do formulário de item da galeria
+ * Todos os campos são obrigatórios para garantir dados completos
  */
 interface GalleryItemForm {
-  id?: number;
-  title: string;
-  category: string;
-  materials: string;
-  color: string;
-  price: number;
+  id: number;
   src: string;
   alt: string;
+  category: string;
+  materials: string;
+  title: string;
+  color: string;
+  price: number;
 }
 
 /**
- * AdminGallery - Componente para gerenciamento da galeria de trabalhos
+ * AdminGallery - Componente para gerenciamento de itens da galeria pelo administrador
  * 
- * Este componente:
- * 1. Lista os itens existentes na galeria com opções de edição e exclusão
- * 2. Permite adicionar novos itens à galeria
- * 3. Restringe o acesso apenas a usuários administradores
+ * Permite:
+ * - Adicionar novos itens à galeria
+ * - Editar itens existentes
+ * - Excluir itens da galeria
+ * - Visualizar todos os itens cadastrados
  */
 const AdminGallery = () => {
-  const { isAdmin } = useAuth();
-  const navigate = useNavigate();
-  
-  // Estados para controlar os diálogos e formulários
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [currentItem, setCurrentItem] = useState<GalleryItemForm>({
-    title: "",
-    category: "sofas",
-    materials: "",
-    color: "",
-    price: 0,
-    src: "",
-    alt: ""
-  });
-  const [itemToDelete, setItemToDelete] = useState<number | null>(null);
-
-  // Redireciona para a home se o usuário não for administrador
-  if (!isAdmin) {
-    navigate("/");
-    toast({
-      title: "Acesso restrito",
-      description: "Você não tem permissão para acessar esta página.",
-      variant: "destructive"
-    });
-    return null;
-  }
-
-  // Simulação de dados da galeria - em uma implementação real, isso viria de uma API/banco de dados
+  // Estado para armazenar os itens da galeria
   const [galleryItems, setGalleryItems] = useState<GalleryImage[]>([
     {
       id: 1,
@@ -95,437 +67,334 @@ const AdminGallery = () => {
       materials: "Couro sintético preto",
       title: "Estofamento de Bancos Automotivos",
       color: "Preto",
-      price: 2350
-    },
+      price: 2200
+    }
   ]);
 
-  /**
-   * Função para abrir o diálogo de adição de novo item
-   */
-  const handleAddNew = () => {
-    setCurrentItem({
-      title: "",
-      category: "sofas",
-      materials: "",
-      color: "",
-      price: 0,
-      src: "",
-      alt: ""
-    });
-    setIsAddDialogOpen(true);
-  };
+  // Estado para controlar o modal de confirmação de exclusão
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  // ID do item a ser excluído
+  const [itemToDelete, setItemToDelete] = useState<number | null>(null);
+  // Estado para controlar o modal de edição/adição
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  // Estado para armazenar os dados do formulário
+  const [formData, setFormData] = useState<GalleryItemForm>({
+    id: 0,
+    src: "",
+    alt: "",
+    category: "",
+    materials: "",
+    title: "",
+    color: "",
+    price: 0
+  });
+
+  // Estado para controlar se estamos editando ou adicionando um novo item
+  const [isEditing, setIsEditing] = useState(false);
+  // Hook para navegação
+  const navigate = useNavigate();
 
   /**
-   * Função para abrir o diálogo de edição de item existente
+   * Manipula a abertura do modal de edição com os dados do item selecionado
+   * @param item - Item da galeria a ser editado
    */
-  const handleEdit = (item: GalleryImage) => {
-    setCurrentItem({ ...item });
+  const handleEditItem = (item: GalleryImage) => {
+    // Garantimos que todos os campos obrigatórios estejam presentes
+    setFormData({
+      id: item.id,
+      src: item.src,
+      alt: item.alt,
+      category: item.category,
+      materials: item.materials,
+      title: item.title,
+      color: item.color || "",
+      price: item.price || 0
+    });
+    setIsEditing(true);
     setIsEditDialogOpen(true);
   };
 
   /**
-   * Função para abrir o diálogo de confirmação de exclusão
+   * Abre o modal para adicionar um novo item com o formulário em branco
    */
-  const handleDeleteConfirm = (id: number) => {
+  const handleAddItem = () => {
+    // Formulário vazio para novo item
+    setFormData({
+      id: Math.max(0, ...galleryItems.map(item => item.id)) + 1,
+      src: "",
+      alt: "",
+      category: "",
+      materials: "",
+      title: "",
+      color: "",
+      price: 0
+    });
+    setIsEditing(false);
+    setIsEditDialogOpen(true);
+  };
+
+  /**
+   * Manipula a exclusão de um item, abrindo o modal de confirmação
+   * @param id - ID do item a ser excluído
+   */
+  const handleDeleteItem = (id: number) => {
     setItemToDelete(id);
     setIsDeleteDialogOpen(true);
   };
 
   /**
-   * Função para salvar um novo item na galeria
+   * Confirma a exclusão do item e atualiza o estado
    */
-  const handleSaveNew = () => {
-    // Validação simples
-    if (!currentItem.title || !currentItem.src) {
-      toast({
-        title: "Campos obrigatórios",
-        description: "Preencha todos os campos obrigatórios.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    // Cria um novo item com ID único
-    const newItem: GalleryImage = {
-      ...currentItem,
-      id: Math.max(0, ...galleryItems.map(item => item.id)) + 1
-    };
-
-    // Adiciona o novo item à lista
-    setGalleryItems([...galleryItems, newItem]);
-    setIsAddDialogOpen(false);
-    
-    toast({
-      title: "Item adicionado",
-      description: "O item foi adicionado à galeria com sucesso."
-    });
-  };
-
-  /**
-   * Função para atualizar um item existente
-   */
-  const handleUpdateItem = () => {
-    // Validação simples
-    if (!currentItem.title || !currentItem.src) {
-      toast({
-        title: "Campos obrigatórios",
-        description: "Preencha todos os campos obrigatórios.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    // Atualiza o item na lista
-    setGalleryItems(galleryItems.map(item => 
-      item.id === currentItem.id ? currentItem as GalleryImage : item
-    ));
-    
-    setIsEditDialogOpen(false);
-    
-    toast({
-      title: "Item atualizado",
-      description: "O item foi atualizado com sucesso."
-    });
-  };
-
-  /**
-   * Função para excluir um item da galeria
-   */
-  const handleDeleteItem = () => {
-    if (itemToDelete) {
-      // Remove o item da lista
-      setGalleryItems(galleryItems.filter(item => item.id !== itemToDelete));
-      setIsDeleteDialogOpen(false);
-      setItemToDelete(null);
-      
+  const confirmDelete = () => {
+    if (itemToDelete !== null) {
+      setGalleryItems(prev => prev.filter(item => item.id !== itemToDelete));
       toast({
         title: "Item excluído",
-        description: "O item foi removido da galeria."
+        description: "O item foi removido da galeria com sucesso."
       });
+      setIsDeleteDialogOpen(false);
+      setItemToDelete(null);
     }
   };
 
   /**
-   * Função para atualizar um campo do formulário
+   * Manipula alterações nos campos do formulário
+   * @param field - Campo a ser atualizado
+   * @param value - Novo valor do campo
    */
-  const handleChange = (field: keyof GalleryItemForm, value: string | number) => {
-    setCurrentItem(prev => ({
+  const handleInputChange = (field: keyof GalleryItemForm, value: string | number) => {
+    setFormData(prev => ({
       ...prev,
       [field]: value
     }));
   };
 
+  /**
+   * Salva o item (novo ou editado) na galeria
+   */
+  const handleSaveItem = () => {
+    // Validações básicas de formulário
+    if (!formData.title || !formData.src || !formData.category) {
+      toast({
+        title: "Formulário incompleto",
+        description: "Preencha todos os campos obrigatórios.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (isEditing) {
+      // Atualiza item existente
+      setGalleryItems(prev => 
+        prev.map(item => item.id === formData.id ? { ...formData } : item)
+      );
+      toast({
+        title: "Item atualizado",
+        description: "As alterações foram salvas com sucesso."
+      });
+    } else {
+      // Adiciona novo item
+      setGalleryItems(prev => [...prev, { ...formData }]);
+      toast({
+        title: "Item adicionado",
+        description: "O novo item foi adicionado à galeria."
+      });
+    }
+    
+    setIsEditDialogOpen(false);
+  };
+
   return (
-    <Layout>
-      <div className="container mx-auto px-4 py-10">
-        {/* Cabeçalho da página */}
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <Button 
-              variant="ghost" 
-              onClick={() => navigate("/admin")}
-              className="mb-2"
-            >
-              <ArrowLeft className="mr-2 h-4 w-4" /> Voltar ao painel
-            </Button>
-            <h1 className="text-3xl font-bold">Gerenciar Galeria</h1>
-            <p className="text-gray-600 mt-2">
-              Adicione, edite ou remova itens da galeria de trabalhos.
-            </p>
-          </div>
-          
-          <Button onClick={handleAddNew} className="flex items-center">
-            <Plus className="mr-2 h-4 w-4" /> Adicionar Novo Item
-          </Button>
+    <div className="container py-10 max-w-5xl">
+      <div className="flex justify-between items-center mb-8">
+        <div>
+          <h1 className="text-3xl font-bold">Gerenciar Galeria</h1>
+          <p className="text-gray-500 mt-1">Adicione, edite ou remova itens da galeria de projetos</p>
         </div>
-
-        {/* Tabela de itens da galeria */}
-        <div className="bg-white rounded-lg shadow-sm overflow-hidden mb-8">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Imagem
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Título
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Categoria
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Preço
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Ações
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {galleryItems.map((item) => (
-                <tr key={item.id}>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <img 
-                      src={item.src} 
-                      alt={item.alt} 
-                      className="h-16 w-16 object-cover rounded"
-                    />
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {item.title}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {item.category === "sofas" && "Sofás"}
-                    {item.category === "chairs" && "Cadeiras"}
-                    {item.category === "cars" && "Automóveis"}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    R$ {item.price.toFixed(2)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    <div className="flex space-x-2">
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        onClick={() => handleEdit(item)}
-                      >
-                        <Edit className="h-4 w-4 text-blue-500" />
-                      </Button>
-                      <Button 
-                        variant="ghost" 
-                        size="sm"
-                        onClick={() => handleDeleteConfirm(item.id)}
-                      >
-                        <Trash className="h-4 w-4 text-red-500" />
-                      </Button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Exibição da galeria */}
-        <div className="mt-10">
-          <h2 className="text-xl font-semibold mb-4">Preview da Galeria</h2>
-          <Gallery images={galleryItems} />
-        </div>
-
-        {/* Diálogo para adicionar novo item */}
-        <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-          <DialogContent className="sm:max-w-[550px]">
-            <DialogHeader>
-              <DialogTitle>Adicionar Novo Item</DialogTitle>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="title">Título*</Label>
-                  <Input
-                    id="title"
-                    value={currentItem.title}
-                    onChange={(e) => handleChange("title", e.target.value)}
-                    placeholder="Ex: Reforma de Sofá 3 Lugares"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="category">Categoria*</Label>
-                  <Select
-                    value={currentItem.category}
-                    onValueChange={(value) => handleChange("category", value)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione a categoria" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="sofas">Sofás</SelectItem>
-                      <SelectItem value="chairs">Cadeiras</SelectItem>
-                      <SelectItem value="cars">Automóveis</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="materials">Materiais</Label>
-                  <Input
-                    id="materials"
-                    value={currentItem.materials}
-                    onChange={(e) => handleChange("materials", e.target.value)}
-                    placeholder="Ex: Veludo azul"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="color">Cor</Label>
-                  <Input
-                    id="color"
-                    value={currentItem.color}
-                    onChange={(e) => handleChange("color", e.target.value)}
-                    placeholder="Ex: Azul"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="price">Preço (R$)</Label>
-                  <Input
-                    id="price"
-                    type="number"
-                    value={currentItem.price}
-                    onChange={(e) => handleChange("price", Number(e.target.value))}
-                    placeholder="Ex: 1850"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="src">URL da Imagem*</Label>
-                  <Input
-                    id="src"
-                    value={currentItem.src}
-                    onChange={(e) => handleChange("src", e.target.value)}
-                    placeholder="https://exemplo.com/imagem.jpg"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="alt">Descrição da Imagem</Label>
-                <Input
-                  id="alt"
-                  value={currentItem.alt}
-                  onChange={(e) => handleChange("alt", e.target.value)}
-                  placeholder="Ex: Sofá reformado com tecido azul"
-                />
-              </div>
-            </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
-                Cancelar
-              </Button>
-              <Button onClick={handleSaveNew}>Salvar</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-
-        {/* Diálogo para editar item existente */}
-        <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-          <DialogContent className="sm:max-w-[550px]">
-            <DialogHeader>
-              <DialogTitle>Editar Item</DialogTitle>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="edit-title">Título*</Label>
-                  <Input
-                    id="edit-title"
-                    value={currentItem.title}
-                    onChange={(e) => handleChange("title", e.target.value)}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="edit-category">Categoria*</Label>
-                  <Select
-                    value={currentItem.category}
-                    onValueChange={(value) => handleChange("category", value)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione a categoria" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="sofas">Sofás</SelectItem>
-                      <SelectItem value="chairs">Cadeiras</SelectItem>
-                      <SelectItem value="cars">Automóveis</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="edit-materials">Materiais</Label>
-                  <Input
-                    id="edit-materials"
-                    value={currentItem.materials}
-                    onChange={(e) => handleChange("materials", e.target.value)}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="edit-color">Cor</Label>
-                  <Input
-                    id="edit-color"
-                    value={currentItem.color}
-                    onChange={(e) => handleChange("color", e.target.value)}
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="edit-price">Preço (R$)</Label>
-                  <Input
-                    id="edit-price"
-                    type="number"
-                    value={currentItem.price}
-                    onChange={(e) => handleChange("price", Number(e.target.value))}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="edit-src">URL da Imagem*</Label>
-                  <Input
-                    id="edit-src"
-                    value={currentItem.src}
-                    onChange={(e) => handleChange("src", e.target.value)}
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="edit-alt">Descrição da Imagem</Label>
-                <Input
-                  id="edit-alt"
-                  value={currentItem.alt}
-                  onChange={(e) => handleChange("alt", e.target.value)}
-                />
-              </div>
-            </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
-                Cancelar
-              </Button>
-              <Button onClick={handleUpdateItem}>Atualizar</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-
-        {/* Diálogo de confirmação de exclusão */}
-        <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-          <DialogContent className="sm:max-w-[450px]">
-            <DialogHeader>
-              <DialogTitle>Confirmar Exclusão</DialogTitle>
-            </DialogHeader>
-            <div className="py-4">
-              <p className="text-gray-700">
-                Tem certeza que deseja excluir este item da galeria? Esta ação não pode ser desfeita.
-              </p>
-            </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
-                Cancelar
-              </Button>
-              <Button 
-                variant="destructive" 
-                onClick={handleDeleteItem}
-              >
-                Excluir
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+        <Button onClick={handleAddItem} className="flex items-center gap-2">
+          <Plus size={16} />
+          Adicionar Item
+        </Button>
       </div>
-    </Layout>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {galleryItems.map((item) => (
+          <Card key={item.id} className="overflow-hidden group">
+            <div className="h-48 overflow-hidden relative">
+              <img 
+                src={item.src} 
+                alt={item.alt} 
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                <Button 
+                  size="sm" 
+                  variant="outline"
+                  className="bg-white text-black hover:bg-gray-100"
+                  onClick={() => handleEditItem(item)}
+                >
+                  <Pencil size={16} />
+                  Editar
+                </Button>
+                <Button 
+                  size="sm" 
+                  variant="outline"
+                  className="bg-white text-red-500 hover:bg-red-50 hover:text-red-600"
+                  onClick={() => handleDeleteItem(item.id)}
+                >
+                  <Trash2 size={16} />
+                  Excluir
+                </Button>
+              </div>
+            </div>
+            <CardContent className="p-4">
+              <h3 className="font-semibold">{item.title}</h3>
+              <p className="text-sm text-gray-500 capitalize">Categoria: {item.category}</p>
+              <p className="text-sm text-gray-500">Material: {item.materials}</p>
+              {item.price && <p className="text-sm font-medium mt-1">R$ {item.price.toLocaleString('pt-BR')}</p>}
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* Dialog para edição/adição de item */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>{isEditing ? "Editar Item" : "Adicionar Novo Item"}</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="title">Título</Label>
+                <Input 
+                  id="title" 
+                  value={formData.title} 
+                  onChange={(e) => handleInputChange("title", e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="category">Categoria</Label>
+                <Select 
+                  value={formData.category} 
+                  onValueChange={(value) => handleInputChange("category", value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione a categoria" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="sofas">Sofás</SelectItem>
+                    <SelectItem value="chairs">Cadeiras</SelectItem>
+                    <SelectItem value="cars">Automóveis</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="color">Cor</Label>
+                <Input 
+                  id="color" 
+                  value={formData.color} 
+                  onChange={(e) => handleInputChange("color", e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="price">Preço (R$)</Label>
+                <Input 
+                  id="price" 
+                  type="number" 
+                  value={formData.price.toString()} 
+                  onChange={(e) => handleInputChange("price", Number(e.target.value))}
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="materials">Materiais</Label>
+              <Input 
+                id="materials" 
+                value={formData.materials} 
+                onChange={(e) => handleInputChange("materials", e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="src">URL da Imagem</Label>
+              <div className="flex gap-2">
+                <Input 
+                  id="src" 
+                  value={formData.src} 
+                  onChange={(e) => handleInputChange("src", e.target.value)}
+                  className="flex-1"
+                />
+                {formData.src && (
+                  <div className="h-10 w-10 overflow-hidden rounded border">
+                    <img 
+                      src={formData.src} 
+                      alt="Preview" 
+                      className="h-full w-full object-cover"
+                      onError={(e) => (e.target as HTMLImageElement).src = "https://placehold.co/400x400?text=Erro"}
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="alt">Texto Alternativo (alt)</Label>
+              <Input 
+                id="alt" 
+                value={formData.alt} 
+                onChange={(e) => handleInputChange("alt", e.target.value)}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button 
+              variant="outline" 
+              onClick={() => setIsEditDialogOpen(false)}
+            >
+              Cancelar
+            </Button>
+            <Button onClick={handleSaveItem}>
+              {isEditing ? "Salvar alterações" : "Adicionar item"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog para confirmação de exclusão */}
+      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Confirmar exclusão</DialogTitle>
+          </DialogHeader>
+          <p className="py-4">Tem certeza que deseja excluir este item da galeria? Esta ação não pode ser desfeita.</p>
+          <DialogFooter>
+            <Button 
+              variant="outline" 
+              onClick={() => setIsDeleteDialogOpen(false)}
+            >
+              Cancelar
+            </Button>
+            <Button 
+              variant="destructive" 
+              onClick={confirmDelete}
+            >
+              Excluir
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Botão para voltar para dashboard */}
+      <div className="mt-8">
+        <Button 
+          variant="outline" 
+          onClick={() => navigate("/admin")}
+        >
+          Voltar ao Dashboard
+        </Button>
+      </div>
+    </div>
   );
 };
 

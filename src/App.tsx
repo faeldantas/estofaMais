@@ -13,11 +13,15 @@ import QuotePage from "./pages/QuotePage";
 import ContactPage from "./pages/ContactPage";
 import AboutPage from "./pages/AboutPage";
 import BlogPage from "./pages/BlogPage";
+import MaterialsPage from "./pages/MaterialsPage";
 import NotFound from "./pages/NotFound";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminGallery from "./pages/admin/AdminGallery";
+import AdminServices from "./pages/admin/AdminServices";
+import AdminMaterials from "./pages/admin/AdminMaterials";
+import AdminBlog from "./pages/admin/AdminBlog";
 
 // Componentes para autenticação e proteção de rotas
 import { AuthProvider } from "./contexts/AuthContext";
@@ -54,6 +58,7 @@ const App = () => (
             <Route path="/" element={<HomePage />} />
             <Route path="/servicos" element={<ServicesPage />} />
             <Route path="/galeria" element={<GalleryPage />} />
+            <Route path="/materiais" element={<MaterialsPage />} />
             <Route path="/orcamento" element={<QuotePage />} />
             <Route path="/contato" element={<ContactPage />} />
             <Route path="/sobre" element={<AboutPage />} />
@@ -72,6 +77,21 @@ const App = () => (
             <Route path="/admin/galeria" element={
               <ProtectedRoute adminOnly>
                 <AdminGallery />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/servicos" element={
+              <ProtectedRoute adminOnly>
+                <AdminServices />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/materiais" element={
+              <ProtectedRoute adminOnly>
+                <AdminMaterials />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/blog" element={
+              <ProtectedRoute adminOnly>
+                <AdminBlog />
               </ProtectedRoute>
             } />
             
