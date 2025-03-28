@@ -13,6 +13,7 @@ import QuotePage from "./pages/QuotePage";
 import ContactPage from "./pages/ContactPage";
 import AboutPage from "./pages/AboutPage";
 import BlogPage from "./pages/BlogPage";
+import BlogPostDetail from "./pages/BlogPostDetail";
 import MaterialsPage from "./pages/MaterialsPage";
 import NotFound from "./pages/NotFound";
 import LoginPage from "./pages/LoginPage";
@@ -79,6 +80,7 @@ const App = () => (
             <Route path="/contato" element={<ContactPage />} />
             <Route path="/sobre" element={<AboutPage />} />
             <Route path="/blog" element={<BlogPage />} />
+            <Route path="/blog/:id" element={<BlogPostDetail />} />
             
             {/* Rotas de autenticação */}
             <Route path="/login" element={<LoginPage />} />

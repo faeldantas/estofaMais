@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Layout from "@/components/Layout";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -22,6 +23,7 @@ import { Link } from "react-router-dom";
 const BlogPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const navigate = useNavigate();
 
   // TODO: Substituir por chamada à API - GET /api/blog/categories
   const categories = [
@@ -91,6 +93,14 @@ const BlogPage = () => {
     }
   ];
 
+  /**
+   * Navega para a página de detalhes do post
+   * @param id - ID do post a ser visualizado
+   */
+  const handlePostClick = (id: number) => {
+    navigate(`/blog/${id}`);
+  };
+
   // Filter posts based on search term and selected category
   // Na implementação real, isso seria substituído por parâmetros de consulta na API
   const filteredPosts = blogPosts.filter(post => {
@@ -137,8 +147,8 @@ const BlogPage = () => {
                         variant={selectedCategory === category.id ? "default" : "ghost"}
                         className={`w-full justify-start ${
                           selectedCategory === category.id 
-                            ? "bg-brand-green text-white hover:bg-brand-green/90" 
-                            : "hover:bg-brand-green-light/20 text-gray-700"
+                            ? "bg-[#87b091] text-white hover:bg-[#87b091]/90" 
+                            : "hover:bg-[#eff0d5] text-gray-700"
                         }`}
                         onClick={() => setSelectedCategory(category.id)}
                       >
@@ -151,14 +161,18 @@ const BlogPage = () => {
             </div>
 
             {filteredPosts.length === 0 ? (
-              <div className="text-center p-10 bg-white rounded-lg shadow border border-brand-green-light/20">
+              <div className="text-center p-10 bg-white rounded-lg shadow border border-[#c4d4ab]/20">
                 <h3 className="text-xl font-semibold mb-2">Nenhum artigo encontrado</h3>
                 <p className="text-gray-600">Tente uma pesquisa diferente ou selecione outra categoria.</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredPosts.map(post => (
-                  <Card key={post.id} className="overflow-hidden hover:shadow-lg transition-shadow border border-brand-green-light/20">
+                  <Card 
+                    key={post.id} 
+                    className="overflow-hidden hover:shadow-lg transition-shadow border border-[#c4d4ab]/20 cursor-pointer"
+                    onClick={() => handlePostClick(post.id)}
+                  >
                     <div className="h-48 overflow-hidden">
                       <img 
                         src={post.image} 
@@ -167,7 +181,7 @@ const BlogPage = () => {
                       />
                     </div>
                     <CardHeader className="pb-2">
-                      <div className="text-sm text-brand-green mb-1">{post.category}</div>
+                      <div className="text-sm text-[#87b091] mb-1">{post.category}</div>
                       <CardTitle className="text-xl">{post.title}</CardTitle>
                       <CardDescription>{post.excerpt}</CardDescription>
                     </CardHeader>
