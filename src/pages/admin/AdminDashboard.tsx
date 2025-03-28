@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Edit, Image, Trash, Package, Users, Home, Book, FileText } from "lucide-react";
+import { Edit, Image, Trash, Package, Users, Home, Book, FileText, MessageSquare } from "lucide-react";
 
 import { useAuth } from "@/contexts/AuthContext";
 import Layout from "@/components/Layout";
@@ -56,7 +56,7 @@ const AdminDashboard = () => {
         </div>
 
         {/* Links rápidos */}
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-6 gap-4 mb-8">
           <Button 
             variant="outline" 
             className="flex items-center justify-center gap-2 h-20 border-[#c4d4ab] hover:bg-[#eff0d5]"
@@ -100,6 +100,15 @@ const AdminDashboard = () => {
           >
             <Book className="h-5 w-5 text-[#87b091]" />
             <span className="text-[#171430]">Gerenciar Blog</span>
+          </Button>
+          
+          <Button 
+            variant="outline" 
+            className="flex items-center justify-center gap-2 h-20 border-[#c4d4ab] hover:bg-[#eff0d5]"
+            onClick={() => navigate("/admin/orcamentos")}
+          >
+            <MessageSquare className="h-5 w-5 text-[#87b091]" />
+            <span className="text-[#171430]">Gerenciar Orçamentos</span>
           </Button>
         </div>
 

@@ -23,6 +23,7 @@ import AdminGallery from "./pages/admin/AdminGallery";
 import AdminServices from "./pages/admin/AdminServices";
 import AdminMaterials from "./pages/admin/AdminMaterials";
 import AdminBlog from "./pages/admin/AdminBlog";
+import AdminQuotes from "./pages/admin/AdminQuotes";
 
 // Componentes para autenticação e proteção de rotas
 import { AuthProvider } from "./contexts/AuthContext";
@@ -110,6 +111,11 @@ const App = () => (
             <Route path="/admin/blog" element={
               <ProtectedRoute adminOnly>
                 <AdminBlog />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/orcamentos" element={
+              <ProtectedRoute adminOnly>
+                <AdminQuotes />
               </ProtectedRoute>
             } />
             
