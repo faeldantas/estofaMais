@@ -18,6 +18,7 @@ import MaterialsPage from "./pages/MaterialsPage";
 import NotFound from "./pages/NotFound";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
+import UserQuotesPage from "./pages/UserQuotesPage";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminGallery from "./pages/admin/AdminGallery";
 import AdminServices from "./pages/admin/AdminServices";
@@ -86,6 +87,13 @@ const App = () => (
             {/* Rotas de autenticação */}
             <Route path="/login" element={<LoginPage />} />
             <Route path="/registrar" element={<RegisterPage />} />
+            
+            {/* Rotas protegidas de usuário */}
+            <Route path="/meus-orcamentos" element={
+              <ProtectedRoute>
+                <UserQuotesPage />
+              </ProtectedRoute>
+            } />
             
             {/* Rotas protegidas de administrador */}
             <Route path="/admin" element={
