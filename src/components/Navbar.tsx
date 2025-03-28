@@ -45,7 +45,7 @@ const Navbar = () => {
   ];
 
   return (
-    <nav className="bg-white shadow-md py-4">
+    <nav className="bg-white shadow-md py-4 font-playfair">
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex justify-between items-center">
           {/* Logo/Nome da empresa com link para a página inicial */}

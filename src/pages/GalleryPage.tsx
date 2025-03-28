@@ -133,7 +133,7 @@ const GalleryPage = () => {
 
   return (
     <Layout>
-      <section className="py-12">
+      <section className="py-12 font-playfair">
         <div className="container mx-auto px-4 md:px-6">
           {/* Cabeçalho da página com título e descrição */}
           <div className="text-center mb-12">

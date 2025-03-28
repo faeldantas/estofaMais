@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
-import { Plus, Pencil, Trash2, Image } from "lucide-react";
+import { Plus, Pencil, Trash2, Image, Check } from "lucide-react";
 import { GalleryImage } from "@/components/Gallery";
 
 /**
@@ -28,6 +28,16 @@ interface GalleryItemForm {
 }
 
 /**
+ * Interface para os orçamentos prontos
+ */
+interface ReadyQuote {
+  id: number;
+  service: string;
+  images: string[];
+  status: string;
+}
+
+/**
  * AdminGallery - Componente para gerenciamento de itens da galeria pelo administrador
  * 
  * Permite:
@@ -35,6 +45,7 @@ interface GalleryItemForm {
  * - Editar itens existentes
  * - Excluir itens da galeria
  * - Visualizar todos os itens cadastrados
+ * - Selecionar imagens de orçamentos marcados como "pronto"
  */
 const AdminGallery = () => {
   // Estado para armazenar os itens da galeria
@@ -71,6 +82,28 @@ const AdminGallery = () => {
     }
   ]);
 
+  // Estado para armazenar orçamentos prontos
+  const [readyQuotes, setReadyQuotes] = useState<ReadyQuote[]>([
+    {
+      id: 1,
+      service: "Estofamento de Sofá",
+      status: "ready",
+      images: [
+        "https://images.unsplash.com/photo-1550226891-ef816aed4a98?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fHNvZmF8ZW58MHx8MHx8fDA%3D%3D&auto=format&fit=crop&w=500&q=60",
+        "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjZ8fHNvZmF8ZW58MHx8MHx8fDA%3D%3D&auto=format&fit=crop&w=500&q=60"
+      ]
+    },
+    {
+      id: 2,
+      service: "Reforma de Cadeiras",
+      status: "ready",
+      images: [
+        "https://images.unsplash.com/photo-1519947486511-46149fa0a254?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8Y2hhaXJ8ZW58MHx8MHx8fDA%3D%3D&auto=format&fit=crop&w=500&q=60",
+        "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8Y2hhaXJ8ZW58MHx8MHx8fDA%3D%3D&auto=format&fit=crop&w=500&q=60"
+      ]
+    }
+  ]);
+
   // Estado para controlar o modal de confirmação de exclusão
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   // ID do item a ser excluído
@@ -91,6 +124,11 @@ const AdminGallery = () => {
 
   // Estado para controlar se estamos editando ou adicionando um novo item
   const [isEditing, setIsEditing] = useState(false);
+  // Estado para controlar o modal de seleção de imagens de orçamentos prontos
+  const [isQuoteImagesOpen, setIsQuoteImagesOpen] = useState(false);
+  // Estado para armazenar a imagem selecionada do orçamento
+  const [selectedImage, setSelectedImage] = useState("");
+  
   // Hook para navegação
   const navigate = useNavigate();
 
@@ -204,8 +242,44 @@ const AdminGallery = () => {
     setIsEditDialogOpen(false);
   };
 
+  /**
+   * Abre o modal para selecionar imagens de orçamentos prontos
+   */
+  const openQuoteImagesModal = () => {
+    setIsQuoteImagesOpen(true);
+  };
+
+  /**
+   * Seleciona uma imagem do orçamento e atualiza o formulário
+   * @param image - URL da imagem selecionada
+   */
+  const selectQuoteImage = (image: string) => {
+    setSelectedImage(image);
+  };
+
+  /**
+   * Confirma a seleção da imagem e atualiza o formulário
+   */
+  const confirmImageSelection = () => {
+    if (selectedImage) {
+      handleInputChange("src", selectedImage);
+      setIsQuoteImagesOpen(false);
+      setSelectedImage("");
+      toast({
+        title: "Imagem selecionada",
+        description: "A imagem foi adicionada ao formulário."
+      });
+    } else {
+      toast({
+        title: "Nenhuma imagem selecionada",
+        description: "Selecione uma imagem para continuar.",
+        variant: "destructive"
+      });
+    }
+  };
+
   return (
-    <div className="container py-10 max-w-5xl">
+    <div className="container py-10 max-w-5xl font-playfair">
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-3xl font-bold">Gerenciar Galeria</h1>
@@ -318,7 +392,18 @@ const AdminGallery = () => {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="src">URL da Imagem</Label>
+              <Label htmlFor="src" className="flex justify-between">
+                <span>URL da Imagem</span>
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  size="sm"
+                  onClick={openQuoteImagesModal}
+                  className="flex items-center gap-1 text-xs"
+                >
+                  <Image size={14} /> Usar imagem de orçamento pronto
+                </Button>
+              </Label>
               <div className="flex gap-2">
                 <Input 
                   id="src" 
@@ -380,6 +465,72 @@ const AdminGallery = () => {
               onClick={confirmDelete}
             >
               Excluir
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog para seleção de imagens de orçamentos prontos */}
+      <Dialog open={isQuoteImagesOpen} onOpenChange={setIsQuoteImagesOpen}>
+        <DialogContent className="sm:max-w-[700px] max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Selecionar Imagem de Orçamento Pronto</DialogTitle>
+          </DialogHeader>
+          
+          {readyQuotes.length > 0 ? (
+            <div className="space-y-6 my-4">
+              {readyQuotes.map((quote) => (
+                <div key={quote.id} className="border rounded-md p-4">
+                  <h3 className="font-medium mb-2">{quote.service} (ID: {quote.id})</h3>
+                  
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    {quote.images.map((image, index) => (
+                      <div 
+                        key={index}
+                        className={`
+                          relative aspect-square rounded-md overflow-hidden border
+                          ${selectedImage === image ? 'ring-2 ring-primary' : 'hover:opacity-90'}
+                          cursor-pointer
+                        `}
+                        onClick={() => selectQuoteImage(image)}
+                      >
+                        <img 
+                          src={image} 
+                          alt={`Imagem ${index + 1} do orçamento ${quote.id}`}
+                          className="h-full w-full object-cover"
+                        />
+                        {selectedImage === image && (
+                          <div className="absolute top-2 right-2 bg-primary text-white rounded-full p-1">
+                            <Check size={16} />
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="py-8 text-center">
+              <p className="text-gray-500">Não há orçamentos marcados como "pronto" com imagens disponíveis.</p>
+            </div>
+          )}
+          
+          <DialogFooter>
+            <Button 
+              variant="outline" 
+              onClick={() => {
+                setIsQuoteImagesOpen(false);
+                setSelectedImage("");
+              }}
+            >
+              Cancelar
+            </Button>
+            <Button 
+              onClick={confirmImageSelection}
+              disabled={!selectedImage}
+            >
+              Usar Imagem Selecionada
             </Button>
           </DialogFooter>
         </DialogContent>

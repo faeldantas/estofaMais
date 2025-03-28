@@ -28,7 +28,7 @@ import { useAuth } from "@/contexts/AuthContext";
  * Esta página permite:
  * 1. Visualizar todos os orçamentos enviados pelo usuário
  * 2. Ver detalhes de cada orçamento
- * 3. Editar orçamentos que ainda não foram aprovados
+ * 3. Editar orçamentos que ainda não foram aprovados ou rejeitados
  * 
  * Em um ambiente de produção, os dados mock devem ser substituídos por chamadas à API:
  * - GET /api/user/quotes - Para listar todos os orçamentos do usuário
@@ -55,7 +55,7 @@ const UserQuotesPage = () => {
       color: "Marrom",
       description: "Sofá de 3 lugares com desgaste nas almofadas e braços",
       date: "2025-03-15",
-      status: "pending", // pending, approved, rejected, contacted
+      status: "pending", // pending, contacted, approved, rejected, ready
       images: [
         "https://images.unsplash.com/photo-1540574163026-643ea20ade25?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8c29mYXxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60",
         "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8c29mYXxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60"
@@ -89,6 +89,21 @@ const UserQuotesPage = () => {
       status: "approved",
       images: []
     },
+    {
+      id: 4,
+      name: "João Silva",
+      email: "joao@exemplo.com",
+      phone: "(11) 98765-4321",
+      service: "Estofamento de Sofá",
+      material: "Linho",
+      color: "Bege",
+      description: "Sofá de 2 lugares para sala de estar",
+      date: "2025-03-25",
+      status: "ready",
+      images: [
+        "https://images.unsplash.com/photo-1550226891-ef816aed4a98?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fHNvZmF8ZW58MHx8MHx8fDA%3D%3D&auto=format&fit=crop&w=500&q=60"
+      ]
+    }
   ]);
 
   /**
@@ -158,6 +173,8 @@ const UserQuotesPage = () => {
         return <Badge className="bg-[#87b091] text-white">Aprovado</Badge>;
       case 'rejected':
         return <Badge className="bg-red-200 text-red-800">Rejeitado</Badge>;
+      case 'ready':
+        return <Badge className="bg-blue-500 text-white">Pronto</Badge>;
       default:
         return <Badge>Desconhecido</Badge>;
     }
@@ -165,23 +182,31 @@ const UserQuotesPage = () => {
 
   /**
    * Função para verificar se um orçamento pode ser editado
-   * Orçamentos podem ser editados apenas se estiverem pendentes
+   * Orçamentos podem ser editados se estiverem pendentes ou contatados
    * @param {string} status - Status do orçamento
    * @returns {boolean} - Se o orçamento pode ser editado
    */
   const canEdit = (status) => {
-    return status === 'pending';
+    return status === 'pending' || status === 'contacted';
   };
 
   return (
     <Layout>
-      <div className="container mx-auto px-4 py-10">
+      <div className="container mx-auto px-4 py-10 font-playfair">
         {/* Cabeçalho da página */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-[#171430]">Meus Orçamentos</h1>
-          <p className="text-gray-600 mt-2">
-            Visualize e gerencie seus pedidos de orçamento.
-          </p>
+        <div className="mb-8 flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-[#171430]">Meus Orçamentos</h1>
+            <p className="text-gray-600 mt-2">
+              Visualize e gerencie seus pedidos de orçamento.
+            </p>
+          </div>
+          <Button
+            onClick={() => navigate('/orcamento')}
+            className="bg-[#87b091] hover:bg-[#87b091]/80"
+          >
+            Solicitar Novo Orçamento
+          </Button>
         </div>
 
         {/* Tabela de orçamentos */}
@@ -244,9 +269,9 @@ const UserQuotesPage = () => {
         {/* Diálogo de detalhes do orçamento */}
         {selectedQuote && (
           <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
-            <DialogContent className="max-w-4xl overflow-y-auto max-h-[90vh] md:max-h-[80vh]">
+            <DialogContent className="max-w-4xl overflow-y-auto max-h-[90vh] md:max-h-[80vh] font-playfair">
               <DialogHeader>
-                <DialogTitle className="text-[#171430]">
+                <DialogTitle className="text-[#171430] text-xl">
                   Detalhes do Orçamento #{selectedQuote.id}
                 </DialogTitle>
                 <DialogDescription>
@@ -342,9 +367,9 @@ const UserQuotesPage = () => {
         {/* Diálogo de edição do orçamento */}
         {editedQuote && (
           <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-            <DialogContent className="max-w-4xl overflow-y-auto max-h-[90vh] md:max-h-[80vh]">
+            <DialogContent className="max-w-4xl overflow-y-auto max-h-[90vh] md:max-h-[80vh] font-playfair">
               <DialogHeader>
-                <DialogTitle className="text-[#171430]">
+                <DialogTitle className="text-[#171430] text-xl">
                   Editar Orçamento #{editedQuote.id}
                 </DialogTitle>
                 <DialogDescription>
