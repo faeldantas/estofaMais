@@ -80,12 +80,25 @@ const Navbar = () => {
                   <DropdownMenuLabel>Minha Conta</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   
+                  {/* Link para meus orçamentos (visível para todos os usuários autenticados) */}
+                  <DropdownMenuItem asChild>
+                    <Link to="/meus-orcamentos" className="w-full cursor-pointer">
+                      Meus Orçamentos
+                    </Link>
+                  </DropdownMenuItem>
+                  
                   {/* Opções de administrador (visíveis apenas para admin) */}
                   {isAdmin && (
                     <>
+                      <DropdownMenuSeparator />
                       <DropdownMenuItem asChild>
                         <Link to="/admin" className="w-full cursor-pointer">
                           Painel de Administração
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link to="/admin/orcamentos" className="w-full cursor-pointer">
+                          Gerenciar Orçamentos
                         </Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem asChild>
@@ -93,11 +106,11 @@ const Navbar = () => {
                           Gerenciar Galeria
                         </Link>
                       </DropdownMenuItem>
-                      <DropdownMenuSeparator />
                     </>
                   )}
                   
                   {/* Opção de logout */}
+                  <DropdownMenuSeparator />
                   <DropdownMenuItem 
                     className="text-red-500 cursor-pointer focus:text-red-500" 
                     onClick={logout}
@@ -149,6 +162,15 @@ const Navbar = () => {
               <>
                 <div className="py-2 px-1 font-medium">{user?.name}</div>
                 
+                {/* Link para meus orçamentos em mobile */}
+                <Link
+                  to="/meus-orcamentos"
+                  className="block text-gray-700 hover:text-primary transition-colors py-2"
+                  onClick={toggleMenu}
+                >
+                  Meus Orçamentos
+                </Link>
+                
                 {isAdmin && (
                   <>
                     <Link
@@ -157,6 +179,13 @@ const Navbar = () => {
                       onClick={toggleMenu}
                     >
                       Painel de Administração
+                    </Link>
+                    <Link
+                      to="/admin/orcamentos"
+                      className="block text-gray-700 hover:text-primary transition-colors py-2"
+                      onClick={toggleMenu}
+                    >
+                      Gerenciar Orçamentos
                     </Link>
                     <Link
                       to="/admin/galeria"

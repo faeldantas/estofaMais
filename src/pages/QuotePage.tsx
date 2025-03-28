@@ -1,8 +1,8 @@
-
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useNavigate } from "react-router-dom";
 import Layout from "@/components/Layout";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -10,10 +10,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
-import { Camera, X, HelpCircle, Trash2 } from "lucide-react";
+import { Camera, X, HelpCircle, Trash2, FileText } from "lucide-react";
 import MaterialSelector from "@/components/MaterialSelector";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Slider } from "@/components/ui/slider";
+import { useAuth } from "@/contexts/AuthContext";
 
 /**
  * Interface para o formulário de orçamento
@@ -71,6 +72,10 @@ const QuotePage = () => {
   // Estado para o range de preço - alterado para iniciar em 0
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 2000]);
 
+  // Hooks para autenticação e navegação
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+
   // Inicialização do formulário com React Hook Form
   const form = useForm<QuoteFormValues>({
     resolver: zodResolver(quoteFormSchema),
@@ -85,6 +90,23 @@ const QuotePage = () => {
       images: [],
     },
   });
+
+  /**
+   * Função para redirecionar para a página "Meus Orçamentos"
+   * Se o usuário não estiver autenticado, redireciona para a página de login
+   */
+  const handleViewMyQuotes = () => {
+    if (isAuthenticated) {
+      navigate("/meus-orcamentos");
+    } else {
+      toast({
+        title: "Acesso restrito",
+        description: "Faça login para visualizar seus orçamentos.",
+        variant: "destructive"
+      });
+      navigate("/login");
+    }
+  };
 
   /**
    * Manipula o upload de imagens
@@ -228,6 +250,19 @@ const QuotePage = () => {
                 Preencha o formulário abaixo para solicitar um orçamento personalizado para 
                 a reforma do seu estofado. Nossa equipe entrará em contato em breve.
               </p>
+              
+              {/* Botão para visualizar orçamentos existentes */}
+              <div className="mt-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleViewMyQuotes}
+                  className="flex items-center gap-2 border-brand-green text-brand-dark hover:bg-brand-cream"
+                >
+                  <FileText size={16} />
+                  Visualizar Meus Orçamentos
+                </Button>
+              </div>
             </div>
 
             {hasSubmitted ? (
@@ -237,12 +272,22 @@ const QuotePage = () => {
                   Recebemos sua solicitação de orçamento. Nossa equipe analisará as informações 
                   e entrará em contato em até 24 horas úteis.
                 </p>
-                <Button 
-                  onClick={() => setHasSubmitted(false)}
-                  className="bg-brand-green hover:bg-brand-green/90 text-white"
-                >
-                  Solicitar Novo Orçamento
-                </Button>
+                <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                  <Button 
+                    onClick={() => setHasSubmitted(false)}
+                    className="bg-brand-green hover:bg-brand-green/90 text-white"
+                  >
+                    Solicitar Novo Orçamento
+                  </Button>
+                  <Button 
+                    variant="outline"
+                    onClick={handleViewMyQuotes}
+                    className="border-brand-green text-brand-dark hover:bg-brand-cream flex items-center gap-2"
+                  >
+                    <FileText size={16} />
+                    Meus Orçamentos
+                  </Button>
+                </div>
               </div>
             ) : (
               <div className="bg-white p-8 rounded-lg shadow-md border border-brand-green-light/30">
