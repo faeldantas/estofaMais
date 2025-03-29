@@ -24,7 +24,7 @@ const Footer = () => {
           <div>
             <h3 className="text-xl font-bold mb-4">EstofaMais</h3>
             <p className="text-gray-300 mb-4">
-              Transformando seus estofados com qualidade e dedicação há mais de 15 anos.
+              Transformando seus estofados com qualidade e dedicação há mais de 20 anos.
             </p>
             <div className="flex space-x-4">
               {/* Espaço reservado para ícones de mídias sociais */}
@@ -80,7 +80,7 @@ const Footer = () => {
               {/* Endereço com ícone */}
               <div className="flex items-center">
                 <MapPin className="h-5 w-5 mr-2" />
-                <span>Rua das Reformas, 123 - São Paulo/SP</span>
+                <span>Jardim de São José, 153 - Russas/CE</span>
               </div>
             </div>
           </div>
