@@ -1,355 +1,326 @@
 
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "@/hooks/use-toast";
-import { 
-  Card, 
-  CardContent, 
-  CardFooter 
-} from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
+  DialogTrigger,
 } from "@/components/ui/dialog";
-import { 
-  Heart, 
-  MessageSquare, 
-  Eye, 
-  EyeOff, 
-  MoreVertical, 
-  User,
-  Send
-} from "lucide-react";
+import { ThumbsUp, Flag, MoreVertical, EyeOff, Eye } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { formatDistanceToNow } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 /**
- * Interface para os comentários do blog
+ * Interface para o tipo de comentário
  */
 interface Comment {
   id: number;
-  userId: number;
-  userName: string;
+  author: {
+    id: number;
+    name: string;
+    avatar?: string;
+  };
   content: string;
-  date: string;
-  isHidden: boolean;
+  createdAt: Date;
+  likes: number;
+  userLiked: boolean;
+  hidden: boolean;
 }
 
 /**
- * Interface para as props do componente BlogCommentSection
- */
-interface BlogCommentSectionProps {
-  postId: number;
-  initialLikes?: number;
-}
-
-/**
- * BlogCommentSection - Componente para exibir e gerenciar comentários e curtidas em posts do blog
+ * Componente BlogCommentSection - Seção de comentários para posts do blog
  * 
- * Este componente permite:
- * - Usuários autenticados podem curtir posts
- * - Usuários autenticados podem adicionar comentários
- * - Administradores podem ocultar/mostrar comentários inapropriados
+ * Este componente permite que usuários visualizem, adicionem e interajam com comentários
+ * em posts do blog. Também inclui funcionalidades administrativas para moderar comentários.
  * 
- * Em um ambiente de produção, os dados mock devem ser substituídos por chamadas à API:
- * - GET /api/posts/:id/comments - Para carregar os comentários
- * - POST /api/posts/:id/comments - Para adicionar um comentário
- * - PUT /api/posts/:id/comments/:commentId - Para ocultar/mostrar um comentário
- * - POST /api/posts/:id/like - Para curtir um post
- * - DELETE /api/posts/:id/like - Para descurtir um post
+ * @param {number} postId - ID do post do blog ao qual os comentários pertencem
  */
-const BlogCommentSection = ({ postId, initialLikes = 0 }: BlogCommentSectionProps) => {
-  const { user, isAuthenticated, isAdmin } = useAuth();
-  
-  // Estado para controlar se o usuário curtiu o post
-  const [isLiked, setIsLiked] = useState(false);
-  // Estado para armazenar o número de curtidas
-  const [likesCount, setLikesCount] = useState(initialLikes);
+const BlogCommentSection = ({ postId }: { postId: number }) => {
   // Estado para armazenar o texto do novo comentário
   const [newComment, setNewComment] = useState("");
-  // Estado para controlar se o diálogo de login está aberto
-  const [isLoginDialogOpen, setIsLoginDialogOpen] = useState(false);
-
-  // Dados mock para os comentários - em produção seriam carregados da API
-  const [comments, setComments] = useState<Comment[]>([
-    {
-      id: 1,
-      userId: 1,
-      userName: "Maria Silva",
-      content: "Adorei este artigo! As dicas sobre a escolha de tecidos para estofados são muito úteis.",
-      date: "2025-03-10T14:30:00",
-      isHidden: false,
-    },
-    {
-      id: 2,
-      userId: 2,
-      userName: "João Oliveira",
-      content: "Muito interessante a explicação sobre durabilidade dos diferentes materiais.",
-      date: "2025-03-11T09:15:00",
-      isHidden: false,
-    },
-    {
-      id: 3,
-      userId: 3,
-      userName: "Ana Pereira",
-      content: "Este conteúdo tem sido muito útil para mim que estou reformando minha casa!",
-      date: "2025-03-12T18:22:00",
-      isHidden: true,
-    },
-  ]);
+  
+  // Estado para armazenar todos os comentários do post
+  const [comments, setComments] = useState<Comment[]>([]);
+  
+  // Acesso ao contexto de autenticação para verificar se o usuário está logado
+  const { user, isAdmin } = useAuth();
 
   /**
-   * Manipula a ação de curtir/descurtir um post
-   * Em produção, isso enviaria uma requisição à API
+   * Efeito para carregar comentários quando o componente é montado
+   * ou quando o postId muda
    */
-  const handleLikeToggle = () => {
-    if (!isAuthenticated) {
-      setIsLoginDialogOpen(true);
-      return;
-    }
+  useEffect(() => {
+    // Simulação de carregamento de comentários de uma API
+    // Em produção, substituir por chamada real à API
+    // GET /api/blog/posts/{postId}/comments
+    setTimeout(() => {
+      const mockComments: Comment[] = [
+        {
+          id: 1,
+          author: { id: 1, name: "João Silva", avatar: "" },
+          content: "Excelente artigo! Muito informativo.",
+          createdAt: new Date(2023, 8, 15),
+          likes: 5,
+          userLiked: false,
+          hidden: false,
+        },
+        {
+          id: 2,
+          author: { id: 2, name: "Maria Oliveira", avatar: "" },
+          content: "Gostei das dicas compartilhadas.",
+          createdAt: new Date(2023, 8, 14),
+          likes: 3,
+          userLiked: true,
+          hidden: false,
+        },
+        {
+          id: 3,
+          author: { id: 3, name: "Pedro Santos", avatar: "" },
+          content: "Comentário inadequado que foi ocultado.",
+          createdAt: new Date(2023, 8, 13),
+          likes: 0,
+          userLiked: false,
+          hidden: true,
+        }
+      ];
+      
+      setComments(mockComments);
+    }, 500);
+  }, [postId]);
 
-    if (isLiked) {
-      // Em produção: DELETE /api/posts/:id/like
-      setLikesCount(prev => prev - 1);
-    } else {
-      // Em produção: POST /api/posts/:id/like
-      setLikesCount(prev => prev + 1);
-    }
-    setIsLiked(!isLiked);
+  /**
+   * Função para enviar um novo comentário
+   */
+  const handleSubmitComment = () => {
+    if (!newComment.trim()) return;
+    
+    // Simulação de envio do comentário para a API
+    // Em produção, substituir por chamada real à API
+    // POST /api/blog/posts/{postId}/comments
+    
+    const newCommentObj: Comment = {
+      id: Date.now(), // Simulação de ID único
+      author: { 
+        id: user?.id || 0, 
+        name: user?.name || "Usuário Anônimo" 
+      },
+      content: newComment,
+      createdAt: new Date(),
+      likes: 0,
+      userLiked: false,
+      hidden: false
+    };
+    
+    setComments(prevComments => [newCommentObj, ...prevComments]);
+    setNewComment("");
+    
+    toast({
+      title: "Comentário adicionado",
+      description: "Seu comentário foi publicado com sucesso!",
+    });
   };
 
   /**
-   * Adiciona um novo comentário ao post
-   * Em produção, isso enviaria um POST para a API
+   * Função para alternar curtida em um comentário
+   * @param {number} commentId - ID do comentário a ser curtido/descurtido
    */
-  const handleAddComment = () => {
-    if (!isAuthenticated) {
-      setIsLoginDialogOpen(true);
-      return;
-    }
-
-    if (!newComment.trim()) {
+  const handleToggleLike = (commentId: number) => {
+    if (!user) {
       toast({
-        title: "Comentário vazio",
-        description: "Escreva algo antes de enviar seu comentário.",
+        title: "Faça login para curtir",
+        description: "Você precisa estar logado para curtir comentários.",
         variant: "destructive",
       });
       return;
     }
-
-    // Em produção: POST /api/posts/:id/comments { content: newComment }
-    const newCommentObject: Comment = {
-      id: Math.max(0, ...comments.map(c => c.id)) + 1,
-      userId: user?.id || 0,
-      userName: user?.name || "Usuário",
-      content: newComment,
-      date: new Date().toISOString(),
-      isHidden: false,
-    };
-
-    setComments(prev => [newCommentObject, ...prev]);
-    setNewComment("");
-
-    toast({
-      title: "Comentário adicionado",
-      description: "Seu comentário foi publicado com sucesso.",
-    });
+    
+    setComments(prevComments => 
+      prevComments.map(comment => {
+        if (comment.id === commentId) {
+          const newLikeStatus = !comment.userLiked;
+          return {
+            ...comment,
+            userLiked: newLikeStatus,
+            likes: comment.likes + (newLikeStatus ? 1 : -1)
+          };
+        }
+        return comment;
+      })
+    );
+    
+    // Em produção, enviar para a API
+    // POST /api/blog/comments/{commentId}/like
   };
 
   /**
-   * Alterna a visibilidade de um comentário (apenas para administradores)
-   * Em produção, isso enviaria um PUT para a API
-   * @param commentId - ID do comentário a ser ocultado/mostrado
+   * Função para alternar visibilidade de um comentário (apenas para admins)
+   * @param {number} commentId - ID do comentário a ter visibilidade alterada
    */
-  const toggleCommentVisibility = (commentId: number) => {
-    // Em produção: PUT /api/posts/:id/comments/:commentId { isHidden: true/false }
-    setComments(prev =>
-      prev.map(comment =>
-        comment.id === commentId
-          ? { ...comment, isHidden: !comment.isHidden }
-          : comment
-      )
+  const handleToggleVisibility = (commentId: number) => {
+    if (!isAdmin) return;
+    
+    setComments(prevComments => 
+      prevComments.map(comment => {
+        if (comment.id === commentId) {
+          return { ...comment, hidden: !comment.hidden };
+        }
+        return comment;
+      })
     );
-
+    
+    // Em produção, enviar para a API
+    // PATCH /api/blog/comments/{commentId}/visibility
+    
     toast({
       title: "Visibilidade alterada",
-      description: "A visibilidade do comentário foi atualizada.",
+      description: "A visibilidade do comentário foi alterada com sucesso.",
     });
   };
 
   /**
-   * Formata a data para exibição no formato local
-   * @param dateString - String de data ISO
-   * @returns Data formatada para exibição
+   * Função para reportar um comentário
+   * @param {number} commentId - ID do comentário a ser reportado
    */
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+  const handleReportComment = (commentId: number) => {
+    // Em produção, enviar para a API
+    // POST /api/blog/comments/{commentId}/report
+    
+    toast({
+      title: "Comentário reportado",
+      description: "Obrigado por reportar. Nossa equipe irá analisar o conteúdo.",
     });
   };
 
   return (
-    <div className="space-y-6 mt-10">
-      {/* Seção de curtidas e contador de comentários */}
-      <div className="flex items-center justify-between border-t border-b py-4">
-        <div className="flex items-center gap-6">
-          <button
-            onClick={handleLikeToggle}
-            className="flex items-center gap-2 text-gray-600 hover:text-primary transition-colors"
-          >
-            <Heart
-              className={`h-5 w-5 ${isLiked ? "fill-red-500 text-red-500" : ""}`}
-            />
-            <span>{likesCount} curtidas</span>
-          </button>
-          
-          <div className="flex items-center gap-2 text-gray-600">
-            <MessageSquare className="h-5 w-5" />
-            <span>{comments.filter(c => !c.isHidden).length} comentários</span>
-          </div>
-        </div>
-      </div>
-
+    <div className="mt-8 space-y-6">
+      <h2 className="text-2xl font-bold">Comentários</h2>
+      
       {/* Formulário para adicionar novo comentário */}
-      <div className="flex gap-3">
-        <div className="flex-shrink-0 w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
-          <User className="h-5 w-5 text-gray-500" />
-        </div>
-        
-        <div className="flex-grow space-y-2">
+      {user ? (
+        <div className="space-y-4">
           <Textarea
-            placeholder={isAuthenticated ? "Escreva seu comentário..." : "Faça login para comentar"}
+            placeholder="Deixe seu comentário..."
             value={newComment}
-            onChange={e => setNewComment(e.target.value)}
-            disabled={!isAuthenticated}
-            className="min-h-[80px] resize-none"
+            onChange={(e) => setNewComment(e.target.value)}
+            className="min-h-[100px]"
           />
-          
-          <div className="flex justify-end">
-            <Button
-              onClick={handleAddComment}
-              disabled={!isAuthenticated || !newComment.trim()}
-              className="flex items-center gap-2"
-            >
-              <Send className="h-4 w-4" />
-              Enviar
-            </Button>
-          </div>
+          <Button 
+            onClick={handleSubmitComment}
+            disabled={!newComment.trim()}
+          >
+            Publicar Comentário
+          </Button>
         </div>
-      </div>
-
+      ) : (
+        <div className="bg-brand-cream/30 p-4 rounded-md text-center">
+          <p className="mb-2">Faça login para deixar seu comentário</p>
+          <Button asChild>
+            <a href="/login">Fazer Login</a>
+          </Button>
+        </div>
+      )}
+      
       {/* Lista de comentários */}
-      <div className="space-y-4 mt-6">
-        <h3 className="text-xl font-medium">Comentários</h3>
-        
+      <div className="space-y-6">
         {comments.length === 0 ? (
-          <p className="text-gray-500 italic">Seja o primeiro a comentar!</p>
+          <p className="text-gray-500 text-center py-4">
+            Ainda não há comentários neste post. Seja o primeiro a comentar!
+          </p>
         ) : (
-          <div className="space-y-4">
-            {comments.map(comment => (
-              <Card 
-                key={comment.id} 
-                className={`${comment.isHidden ? 'bg-gray-50 opacity-70' : ''}`}
-              >
-                <CardContent className="p-4">
-                  <div className="flex justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center">
-                        <User className="h-4 w-4 text-primary" />
-                      </div>
-                      <div>
-                        <p className="font-medium text-sm">{comment.userName}</p>
-                        <p className="text-xs text-gray-500">{formatDate(comment.date)}</p>
-                      </div>
-                    </div>
-                    
+          comments.map(comment => (
+            <div 
+              key={comment.id} 
+              className={`bg-white p-4 rounded-md shadow-sm ${comment.hidden ? 'opacity-60' : ''}`}
+            >
+              {/* Cabeçalho do comentário com avatar e nome do autor */}
+              <div className="flex items-start justify-between">
+                <div className="flex items-center space-x-3">
+                  <Avatar>
+                    <AvatarImage src={comment.author.avatar} />
+                    <AvatarFallback>
+                      {comment.author.name.substring(0, 2).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <h4 className="font-semibold">{comment.author.name}</h4>
+                    <p className="text-xs text-gray-500">
+                      {formatDistanceToNow(comment.createdAt, { 
+                        addSuffix: true,
+                        locale: ptBR
+                      })}
+                      {comment.hidden && (
+                        <span className="ml-2 text-amber-600">(Comentário oculto)</span>
+                      )}
+                    </p>
+                  </div>
+                </div>
+                
+                {/* Menu de opções do comentário */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm">
+                      <MoreVertical className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
                     {isAdmin && (
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" className="h-8 w-8">
-                            <MoreVertical className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem
-                            onClick={() => toggleCommentVisibility(comment.id)}
-                            className="cursor-pointer"
-                          >
-                            {comment.isHidden ? (
-                              <>
-                                <Eye className="h-4 w-4 mr-2" />
-                                Mostrar comentário
-                              </>
-                            ) : (
-                              <>
-                                <EyeOff className="h-4 w-4 mr-2" />
-                                Ocultar comentário
-                              </>
-                            )}
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                      <DropdownMenuItem onClick={() => handleToggleVisibility(comment.id)}>
+                        {comment.hidden ? (
+                          <>
+                            <Eye className="h-4 w-4 mr-2" />
+                            Mostrar comentário
+                          </>
+                        ) : (
+                          <>
+                            <EyeOff className="h-4 w-4 mr-2" />
+                            Ocultar comentário
+                          </>
+                        )}
+                      </DropdownMenuItem>
                     )}
-                  </div>
-                  
-                  <div className={`mt-3 ${comment.isHidden ? 'text-gray-400' : 'text-gray-700'}`}>
-                    {comment.isHidden && isAdmin && (
-                      <div className="mb-2 text-xs bg-gray-100 text-gray-500 px-2 py-1 rounded inline-block">
-                        Comentário oculto (visível apenas para administradores)
-                      </div>
+                    {!isAdmin && (
+                      <DropdownMenuItem onClick={() => handleReportComment(comment.id)}>
+                        <Flag className="h-4 w-4 mr-2" />
+                        Reportar
+                      </DropdownMenuItem>
                     )}
-                    <p>{comment.content}</p>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+              
+              {/* Conteúdo do comentário */}
+              <div className="mt-2">
+                <p className="text-gray-700">{comment.content}</p>
+              </div>
+              
+              {/* Rodapé do comentário com botão de curtir */}
+              <div className="mt-4 flex items-center">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => handleToggleLike(comment.id)}
+                  className={`flex items-center ${comment.userLiked ? 'text-brand-green' : ''}`}
+                >
+                  <ThumbsUp className="h-4 w-4 mr-1" />
+                  <span>{comment.likes}</span>
+                </Button>
+              </div>
+            </div>
+          ))
         )}
       </div>
-
-      {/* Diálogo de login */}
-      <Dialog open={isLoginDialogOpen} onOpenChange={setIsLoginDialogOpen}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Faça login para continuar</DialogTitle>
-          </DialogHeader>
-          <p className="py-4">
-            Você precisa estar logado para curtir e comentar posts. Faça login ou crie uma conta.
-          </p>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setIsLoginDialogOpen(false)}
-            >
-              Cancelar
-            </Button>
-            <Button
-              onClick={() => {
-                setIsLoginDialogOpen(false);
-                // Redirecionar para a página de login
-                window.location.href = "/login";
-              }}
-            >
-              Fazer Login
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };
