@@ -47,14 +47,12 @@ const queryClient = new QueryClient();
  * 4. Sistema de roteamento com react-router-dom
  * 5. Provedor de autenticação para gerenciar login/logout e permissões
  */
-const App = () => (
-  <React.StrictMode>
+const App = () => {
+  return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <AuthProvider>
           <TooltipProvider>
-            <Toaster />
-            <Sonner />
             <Routes>
               {/* Rotas públicas */}
               <Route path="/" element={<HomePage />} />
@@ -113,11 +111,13 @@ const App = () => (
               {/* Rota curinga que captura URLs inválidas */}
               <Route path="*" element={<NotFound />} />
             </Routes>
+            <Toaster />
+            <Sonner />
           </TooltipProvider>
         </AuthProvider>
       </BrowserRouter>
     </QueryClientProvider>
-  </React.StrictMode>
-);
+  );
+};
 
 export default App;

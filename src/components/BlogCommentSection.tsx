@@ -40,14 +40,23 @@ interface Comment {
 }
 
 /**
+ * Interface para as props do componente BlogCommentSection
+ */
+interface BlogCommentSectionProps {
+  postId: number;
+  initialLikes?: number; // Adicionada a prop initialLikes como opcional
+}
+
+/**
  * Componente BlogCommentSection - Seção de comentários para posts do blog
  * 
  * Este componente permite que usuários visualizem, adicionem e interajam com comentários
  * em posts do blog. Também inclui funcionalidades administrativas para moderar comentários.
  * 
  * @param {number} postId - ID do post do blog ao qual os comentários pertencem
+ * @param {number} initialLikes - Número inicial de curtidas no post (opcional)
  */
-const BlogCommentSection = ({ postId }: { postId: number }) => {
+const BlogCommentSection = ({ postId, initialLikes = 0 }: BlogCommentSectionProps) => {
   // Estado para armazenar o texto do novo comentário
   const [newComment, setNewComment] = useState("");
   
@@ -203,6 +212,7 @@ const BlogCommentSection = ({ postId }: { postId: number }) => {
     });
   };
 
+  // Resto do código continua igual
   return (
     <div className="mt-8 space-y-6">
       <h2 className="text-2xl font-bold">Comentários</h2>
