@@ -120,7 +120,7 @@ const BlogCommentSection = ({ postId, initialLikes = 0 }: BlogCommentSectionProp
     // POST /api/blog/posts/{postId}/comments
     
     const newCommentObj: Comment = {
-      id: Date.now(), // Simulação de ID único
+      id: Math.floor(Date.now()), // Corrigido para garantir que seja número
       author: { 
         id: user?.id || 0, 
         name: user?.name || "Usuário Anônimo" 
