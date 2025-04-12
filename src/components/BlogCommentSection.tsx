@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -122,7 +121,7 @@ const BlogCommentSection = ({ postId, initialLikes = 0 }: BlogCommentSectionProp
     const newCommentObj: Comment = {
       id: Math.floor(Date.now()), // Corrigido para garantir que seja número
       author: { 
-        id: user?.id || 0, 
+        id: user?.id ? Number(user.id) : 0, // Converter para number para garantir o tipo correto
         name: user?.name || "Usuário Anônimo" 
       },
       content: newComment,
